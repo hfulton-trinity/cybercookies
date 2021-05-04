@@ -2,6 +2,13 @@
 
 const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
+const logInCust = document.getElementById("custLoginRoute").value;
+const logOutCust = document.getElementById("custLogoutRoute").value;
+const logInTroop = document.getElementById("troopLoginRoute").value;
+const logOutTroop = document.getElementById("troopLogoutRoute").value;
+const addCust = document.getElementById("newCustRoute").value;
+const addTroop = document.getElementById("newTroopRoute").value;
+const getAllCookies = document.getElementById("getCookiesRoute").value;
 
 
 class ApplicationMainComponent extends React.Component {
@@ -63,7 +70,7 @@ class HomeComponent extends React.Component {
 
   render(){
     ce('div',null,
-      ce('h3',null,'MAINPAGESTATEMENT HERE'),
+      ce('h3',null,'Welcome one and all to your virtual connection with your girl scout cookie dealer'),
       ce('h5',null,'Most Popular Cookies'),
       ce('div',{id = "cookie_bar"},
         //images here with hover method
@@ -113,15 +120,24 @@ class LoginComponent extends React.Component {
 class ContactComponent extends React.Component {
   constructor(props){
     super(props);
+    this.state = {name: "", email: "", message: ""};
   }
 
   render(){
     //central box
-    //title with description
-    ce('div',)
-    //full name
-    //email
-    //message
+    ce('div', {id = "contact_us"},
+      ce('h2',null,'Contact Us'),
+      ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
+      'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Comments:',ce('input',{type: "text", value: this.state.message, onChange: e => this.typingHandler(e)}),
+      ce('br'), ce('button', null, 'Send')
+    );
+  }
+
+  typingHandler(e) {
+    this.setState({[e.target['id']]: e.target.value});
+    console.log([e.target['id']]);
   }
 }
 
