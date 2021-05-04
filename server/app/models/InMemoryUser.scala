@@ -7,8 +7,8 @@ class InMemoryUser extends UserModel {
   type UserId = Int
   type TransactionId = Int
 
-  private var _users: Map[UserId, User] = ???
-  private var _transactions: Map[TransactionId, Transaction] = ???
+  private var _users: Map[UserId, User] = Map[UserId, User]()
+  private var _transactions: Map[TransactionId, Transaction] = Map[TransactionId, Transaction]()
 
   private def users = _users
   private def transactions = _transactions
