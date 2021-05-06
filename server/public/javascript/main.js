@@ -14,15 +14,28 @@ const getAllCookies = document.getElementById("getCookiesRoute").value;
 class ApplicationMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H"};
+    this.state = {page: "H", login: ""};
   }
-
+//need login change option
   render(){
-    switch(this.state) {
+    switch(this.state.page) {
       case "H": ce('div', 'null', ce(HeaderComponent), ce(HomeComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
       case "About": ce('div', 'null', ce(HeaderComponent), ce(AboutComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
       case "Cookies": ce('div', 'null', ce(HeaderComponent), ce(CookieComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
-      case "Login": ce('div', 'null', ce(HeaderComponent), ce(LoginComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+      case "Login": {
+        if(this.state.login == ""){
+          ce('div', 'null', ce(HeaderComponent), ce(LoginCustComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+        } else if(this.state.login == "c") {
+          ce('div', 'null', ce(HeaderComponent), ce(LoginCustComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+        } else if(this.state.login == "t") {
+          ce('div', 'null', ce(HeaderComponent), ce(LoginTroopComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+        } else if(this.state.login == "nc") {
+          ce('div', 'null', ce(HeaderComponent), ce(NewCustComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+        } else if(this.state.login == "nt") {
+          ce('div', 'null', ce(HeaderComponent), ce(NewTroopComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+        }
+
+      }
       case "Contact": ce('div', 'null', ce(HeaderComponent), ce(ContactComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
     }
   }
@@ -37,15 +50,19 @@ class HeaderComponent extends React.Component {
 
   render(){
     ce('div', 'null', ce('h2', null, 'Cyber'), ce('h3', null, 'Cookies'),
-      ce('div',{id: "navbar_home"},
+      ce('nav',{id: "navbar_home"},
         ce('button', {onClick: e => changePage("H")}, 'Home'),
         ce('button', {onClick: e => changePage("About")}, 'About Us'),
         ce('button', {onClick: e => changePage("Cookies")}, 'Cookies'),
-        ce('button', {onClick: e => changePage("Login")}, 'Login'),
+        ce('button', {onClick: e => changePage("Login"), onHover: e => dispOptions()}, 'Login'),
         //login button dropdown menu needs to be implemented
         ce('button', {onClick: e => changePage("Contact")}, 'Contact Us')
       )
     );
+  }
+
+  dispOptions(){
+    //dropdown menu
   }
 }
 
@@ -57,7 +74,8 @@ class BaseComponent extends React.Component {
   render(){
     ce('div', 'null',
       ce('div',{id: "basebar_home"},
-        //links to troop login and customer login
+        ce('a',,),
+        ce('a',,)
       )
     );
   }
@@ -106,15 +124,168 @@ class CookieComponent extends React.Component {
   }
 }
 
-class LoginComponent extends React.Component {
+class LoginCustComponent extends React.Component {
   constructor(props){
     super(props);
+    this.state = {username: "", password: "", loginErrorInfo: ""};
   }
 
   render(){
-    //two login pages- troop and customer
-    //also need create user
+    ce('form', {id = "cust_login"},
+      ce('h2',null,'Login'),
+      'Username:',ce('input',{type: "text", value: this.state.username, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Password:',ce('input',{type: "text", value: this.state.password, onChange: e => this.typingHandler(e)}),
+      ce('br'), ce('button', {onClick: e => login(e)}, 'Login'),
+      //ce('a', {href: ""},'Click here to create a new account'),
+      //ce('a', {href: ""},'Click here to access the troop login')
+    );
   }
+
+  typingHandler(e) {
+    this.setState({[e.target['id']]: e.target.value});
+    console.log([e.target['id']]);
+  }
+
+  login(e) {
+    const user = this.state.username;
+    const pass = this.state.password;
+    fetch(validateCustRoute, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
+        body: JSON.stringify({user, pass})
+    }).then(res => res.json()).then(data => {
+      console.log(data);
+      if(data) {
+        //switch to customer page
+      } else {
+        this.setState({loginErrorInfo: "Do not pass GO"});
+      }
+    });
+  }
+}
+
+class LoginTroopComponent extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {troop_no: "", password: "", loginErrorInfo: ""};
+  }
+
+  render(){
+    ce('form', {id = "troop_login"},
+      ce('h2',null,'Troop Login'),
+      'Troop No.:',ce('input',{type: "text", value: this.state.troop_no, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Password:',ce('input',{type: "text", value: this.state.password, onChange: e => this.typingHandler(e)}),
+      ce('br'), ce('button', {onClick: e => login(e)}, 'Login')
+      //ce('a', {href: ""},'Click here to create a new account'),
+      //ce('a', {href: ""},'Click here to access the troop login')
+    );
+  }
+
+  typingHandler(e) {
+    this.setState({[e.target['id']]: e.target.value});
+    console.log([e.target['id']]);
+  }
+
+  login(e) {
+    const user = this.state.troop_no;
+    const pass = this.state.password;
+    fetch(validateTroopRoute, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
+        body: JSON.stringify({user, pass})
+    }).then(res => res.json()).then(data => {
+      console.log(data);
+      if(data) {
+        //switch to troop page
+      } else {
+        this.setState({loginErrorInfo: "Do not pass GO"});
+      }
+    });
+  }
+}
+
+class NewTroopComponent extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {troop_no: "", password: "", email: "", address: "", createErrorInfo: ""};
+  }
+
+  render(){
+    //no,pass,email,address
+    ce('form', {id = "create_troop"},
+      ce('h2',null,'Create a Troop Account'),
+      'Troop No.:',ce('input',{type: "text", value: this.state.troop_no, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Password:',ce('input',{type: "text", value: this.state.password, onChange: e => this.typingHandler(e)}),
+      'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Address:',ce('input',{type: "text", value: this.state.address, onChange: e => this.typingHandler(e)}),
+      ce('br'), ce('button', {onClick: e => makeUser()}, 'Create Account')
+      //ce('a', {href: ""},'Click here to create a new account'),
+      //ce('a', {href: ""},'Click here to access the troop login')
+    );
+  }
+
+  typingHandler(e) {
+    this.setState({[e.target['id']]: e.target.value});
+    console.log([e.target['id']]);
+  }
+
+  makeUser() {
+    const ntroop = this.state.troop_no;
+    const npass = this.state.password;
+    const temail = this.state.email;
+    const taddress = this.state.address;
+    fetch(newCustRoute, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
+        body: JSON.stringify({"user": ntroop , "pass": npass, "email": temail, "address": taddress })
+    }).then(res => res.json()).then(data => {
+      if(data) {
+        //switch to troop page
+      } else {
+        this.setState({createErrorInfo: "You are not welcome here"});
+      }
+    });
+  }
+}
+
+class NewCustComponent extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {name: "", username: "", password: "", email: "", troop: "", createErrorInfo: ""};
+  }
+
+  render(){
+    //name,user,pass,email,troop
+    ce('form', {id = "create_customer"},
+      ce('h2',null,'Create a Customer Account'),
+      'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
+      'Username:',ce('input',{type: "text", value: this.state.username, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Password:',ce('input',{type: "text", value: this.state.password, onChange: e => this.typingHandler(e)}),
+      'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Troop:',ce('input',{type: "text", value: this.state.troop, onChange: e => this.typingHandler(e)}),
+      ce('br'), ce('button', {onClick: e => makeUser()}, 'Create Account')
+      //ce('a', {href: ""},'Click here to create a new account'),
+      //ce('a', {href: ""},'Click here to access the troop login')
+    );
+  }
+
+  makeUser() {
+    const nname = this.state.name;
+    const nuser = this.state.username;
+    const npass = this.state.password;
+    const cemail = this.state.email;
+    const troop = this.state.troop;
+    fetch(newCustRoute, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
+        body: JSON.stringify({"name": nname, "user": nuser , "pass": npass, "email": cemail, "troop": troop })
+    }).then(res => res.json()).then(data => {
+      if(data) {
+        //switch to cust page
+      } else {
+        this.setState({createErrorInfo: "You are not welcome here"});
+      }
+    });
 }
 
 class ContactComponent extends React.Component {
@@ -125,7 +296,7 @@ class ContactComponent extends React.Component {
 
   render(){
     //central box
-    ce('div', {id = "contact_us"},
+    ce('form', {id = "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
       'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
