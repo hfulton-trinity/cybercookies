@@ -15,8 +15,8 @@ class Application @Inject()(cc: ControllerComponents) extends AbstractController
     Ok(views.html.home())
   }
 
-  def getCookies = Action {
-    ??
+  def getCookies = Action { implicit request =>
+    Ok(views.html.home()) //placeholder!!
   }
 
 }

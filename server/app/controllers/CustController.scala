@@ -9,12 +9,12 @@ import models._
 import play.api.libs.json._
 
 @Singleton
-class Application @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class CustController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
   def load = Action{ implicit request =>
     Ok(views.html.cust())
   }
-
+/*
   //Figure out database interactions
 
   implicit val custDataReads = Json.reads[CustData]
@@ -56,4 +56,5 @@ class Application @Inject()(cc: ControllerComponents) extends AbstractController
       }
     }
   }
+  */
 }

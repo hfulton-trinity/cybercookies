@@ -1,7 +1,5 @@
 "use strict"
 
-import {Redirect} from 'react-router-dom'
-
 const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
 const getAllCookies = document.getElementById("getCookiesRoute").value;
@@ -12,15 +10,27 @@ const troopPage = document.getElementById("troopPageRoute").value;
 class ApplicationMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", login: ""};
+    this.state = {page: "H"};
+    this.handlePageChange = this.handlePageChange.bind(this);
+  }
+
+  handlePageChange(page){
+    console.log(page);
+    this.setState({page});
   }
 
   render(){
+    console.log(this.state.page);
     switch(this.state.page) {
-      case "H": ce('div', 'null', ce(HeaderComponent), ce(HomeComponent, {changePage: page => this.setState(page)}));
-      case "About": ce('div', 'null', ce(HeaderComponent), ce(AboutComponent, {changePage: page => this.setState(page)}));
-      case "Cookies": ce('div', 'null', ce(HeaderComponent), ce(CookieComponent, {changePage: page => this.setState(page)}));
-      case "Contact": ce('div', 'null', ce(HeaderComponent), ce(ContactComponent, {changePage: page => this.setState(page)}));
+      case "H": {
+        console.log("H switch case");
+        return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(HomeComponent));
+
+      }
+      case "About": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(AboutComponent));
+      case "Cookies": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(CookieComponent));
+      case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(ContactComponent));
+      case _: return ce('p',null,'FAIL');
     }
   }
 
@@ -33,42 +43,53 @@ class HeaderComponent extends React.Component {
 
     this.showMenu = this.showMenu.bind(this);
     this.closeMenu = this.closeMenu.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  //changePage(str){
+    //super.setState({page: str});
+  //}
+
+  handleChange(e, str) {
+    console.log("trying to handle change: "+ str);
+    this.props.changePage(str);
   }
 
   render(){
+    console.log("rendering header");
     if(this.state.showMenu){
-      ce('div', 'null', ce('h2', null, 'Cyber',ce('h3', null, 'Cookies')),
+      return ce('div', 'null', ce('h2', null, 'CyberCookies'),
         ce('nav',{id: "navbar_home"},
-          ce('button', {onClick: e => changePage("H")}, 'Home'),
-          ce('button', {onClick: e => changePage("About")}, 'About Us'),
-          ce('button', {onClick: e => changePage("Cookies")}, 'Cookies'),
-          ce('button', {onClick: e => showMenu(e)}, 'Login'),
-          ce('div', {className="menu",ref={(element) => this.dropdownMenu = element;}},
-            ce('button',{onClick: e => transferCust(e)},'Customer Login'),
-            ce('button',{onClick: e => transferTroop(e)},'Troop Login'),
+          ce('button', {onClick: e => this.handleChange(e,"H")}, 'Home'),
+          ce('button', {onClick: e => this.handleChange(e,"About")}, 'About Us'),
+          ce('button', {onClick: e => this.handleChange(e,"Cookies")}, 'Cookies'),
+          ce('button', {onClick: e => this.showMenu(e)}, 'Login'),
+          ce('div', {className: "menu",ref: element => {this.dropdownMenu = element}},
+            ce('button',{onClick: e => this.transferCust(e)},'Customer Login'),
+            ce('button',{onClick: e => this.transferTroop(e)},'Troop Login'),
           ),
-          ce('button', {onClick: e => changePage("Contact")}, 'Contact Us')
+          ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us')
         )
       );
     } else {
-      ce('div', 'null', ce('h2', null, 'Cyber',ce('h3', null, 'Cookies')),
+      return ce('div', 'null', ce('h2', null, 'CyberCookies'),
         ce('nav',{id: "navbar_home"},
-          ce('button', {onClick: e => changePage("H")}, 'Home'),
-          ce('button', {onClick: e => changePage("About")}, 'About Us'),
-          ce('button', {onClick: e => changePage("Cookies")}, 'Cookies'),
-          ce('button', {onClick: e => showMenu(e)}, 'Login'),
-          ce('button', {onClick: e => changePage("Contact")}, 'Contact Us')
+          ce('button', {onClick: e => this.handleChange(e,"H")}, 'Home'),
+          ce('button', {onClick: e => this.handleChange(e,"About")}, 'About Us'),
+          ce('button', {onClick: e => this.handleChange(e,"Cookies")}, 'Cookies'),
+          ce('button', {onClick: e => this.showMenu(e)}, 'Login'),
+          ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us')
         )
       );
     }
   }
 
   transferCust(e){
-    ce('Redirect',{to=custPage});
+    ce('Redirect',{to: custPage});
   }
 
   transferTroop(e){
-    ce('Redirect',{to=troopPage});
+    ce('Redirect',{to: troopPage});
   }
 
   showMenu(e){
@@ -80,7 +101,7 @@ class HeaderComponent extends React.Component {
   }
 
   closeMenu(e) {
-    if(!this.dropdownMenu.contains(event.target)){
+    if(!this.dropdownMenu.contains(e.target)){
       this.setState({showMenu: false}, () => {document.removeEventListener('click',this.closeMenu);});
     }
   }
@@ -91,15 +112,16 @@ class HomeComponent extends React.Component {
     super(props);
   }
 
-  componentDidMount(){
+  //componentDidMount(){
     //load cookies
-  }
+  //}
 
   render(){
-    ce('div',null,
+    console.log("rendering home");
+    return ce('div',null,
       ce('h3',null,'Welcome one and all to your virtual connection with your girl scout cookie dealer'),
       ce('h5',null,'Most Popular Cookies'),
-      ce('div',{id = "cookie_bar"},
+      ce('div',{id: "cookie_bar"},null
         //images here with hover method
       )
     );
@@ -112,7 +134,7 @@ class AboutComponent extends React.Component {
   }
 
   render(){
-    ce('div', null,
+    return ce('div', null,
       ce('h1',null,'About Us'),
       ce('br'),
       //Mission Statement
@@ -147,6 +169,7 @@ class CookieComponent extends React.Component {
   }
 
   render(){
+    return ce('div',{id:"cookies"},null);
     //Featured cookie bar (images with names)
     //Scroll through cookie images and descriptions
 
@@ -160,7 +183,7 @@ class ContactComponent extends React.Component {
   }
 
   render(){
-    ce('form', {id = "contact_us"},
+    return ce('form', {id: "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
       'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
