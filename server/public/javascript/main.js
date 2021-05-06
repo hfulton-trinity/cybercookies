@@ -6,7 +6,6 @@ const getAllCookies = document.getElementById("getCookiesRoute").value;
 const custPage = document.getElementById("custPageRoute").value;
 const troopPage = document.getElementById("troopPageRoute").value;
 
-
 class ApplicationMainComponent extends React.Component {
   constructor(props){
     super(props);
@@ -22,11 +21,7 @@ class ApplicationMainComponent extends React.Component {
   render(){
     console.log(this.state.page);
     switch(this.state.page) {
-      case "H": {
-        console.log("H switch case");
-        return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(HomeComponent));
-
-      }
+      case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(HomeComponent));
       case "About": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(AboutComponent));
       case "Cookies": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(CookieComponent));
       case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(ContactComponent));
@@ -51,12 +46,10 @@ class HeaderComponent extends React.Component {
   //}
 
   handleChange(e, str) {
-    console.log("trying to handle change: "+ str);
     this.props.changePage(str);
   }
 
   render(){
-    console.log("rendering header");
     if(this.state.showMenu){
       return ce('div', 'null', ce('h2', null, 'CyberCookies'),
         ce('nav',{id: "navbar_home"},
@@ -121,7 +114,8 @@ class HomeComponent extends React.Component {
     return ce('div',null,
       ce('h3',null,'Welcome one and all to your virtual connection with your girl scout cookie dealer'),
       ce('h5',null,'Most Popular Cookies'),
-      ce('div',{id: "cookie_bar"},null
+      ce('div',{id: "cookie_bar"},
+        ce('img', {src: "images/ThinMints.jpg"},null)
         //images here with hover method
       )
     );
