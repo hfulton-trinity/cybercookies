@@ -104,10 +104,25 @@ class AboutComponent extends React.Component {
 
   render(){
     ce('div', null,
+      ce('h1',null,'About Us'),
+      ce('br'),
       //Mission Statement
+      ce('h2',null,"Why We're Here"),
+      ce('br'),
+      ce('h4',null,'Our Corporate Mission is to Empower Individuals Worldwide to Enjoy Girl Scout Cookies(TM) in any Way Possible'),
+      ce('br'),
       //Vision for Future
+      ce('h2',null,"Our Vision For The Future"),
+      ce('br'),
+      'We envision a bright future where anyone and everyone may enjoy delicious Girl Scout Cookies (TM).',
+      '  By connecting customers with Girl Scout Troops of their area, we will be able to ensure cookie enjoying throughout the United States and eventually the world',
+      ce('br'),
       //Company History
+      ce('h2',null,'Our History'),
+      ce('br'),
+      'Founded in 2017 by a group of visionaries, we at _______ quickly expanded from our home in San Antonio into the surround areas of Central Texas.  Since then, the team as expanded rapidly and __________',
       //Photos and descriptions for us
+      ce('h2',null,'Who We Are')
     );
   }
 }
