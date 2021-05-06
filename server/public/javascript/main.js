@@ -3,9 +3,7 @@
 const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
 const logInCust = document.getElementById("custLoginRoute").value;
-const logOutCust = document.getElementById("custLogoutRoute").value;
 const logInTroop = document.getElementById("troopLoginRoute").value;
-const logOutTroop = document.getElementById("troopLogoutRoute").value;
 const addCust = document.getElementById("newCustRoute").value;
 const addTroop = document.getElementById("newTroopRoute").value;
 const getAllCookies = document.getElementById("getCookiesRoute").value;
@@ -19,24 +17,24 @@ class ApplicationMainComponent extends React.Component {
 //need login change option
   render(){
     switch(this.state.page) {
-      case "H": ce('div', 'null', ce(HeaderComponent), ce(HomeComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
-      case "About": ce('div', 'null', ce(HeaderComponent), ce(AboutComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
-      case "Cookies": ce('div', 'null', ce(HeaderComponent), ce(CookieComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+      case "H": ce('div', 'null', ce(HeaderComponent), ce(HomeComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
+      case "About": ce('div', 'null', ce(HeaderComponent), ce(AboutComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
+      case "Cookies": ce('div', 'null', ce(HeaderComponent), ce(CookieComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
       case "Login": {
         if(this.state.login == ""){
-          ce('div', 'null', ce(HeaderComponent), ce(LoginCustComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+          ce('div', 'null', ce(HeaderComponent), ce(LoginCustComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
         } else if(this.state.login == "c") {
-          ce('div', 'null', ce(HeaderComponent), ce(LoginCustComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+          ce('div', 'null', ce(HeaderComponent), ce(LoginCustComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
         } else if(this.state.login == "t") {
-          ce('div', 'null', ce(HeaderComponent), ce(LoginTroopComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+          ce('div', 'null', ce(HeaderComponent), ce(LoginTroopComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
         } else if(this.state.login == "nc") {
-          ce('div', 'null', ce(HeaderComponent), ce(NewCustComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+          ce('div', 'null', ce(HeaderComponent), ce(NewCustComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
         } else if(this.state.login == "nt") {
-          ce('div', 'null', ce(HeaderComponent), ce(NewTroopComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+          ce('div', 'null', ce(HeaderComponent), ce(NewTroopComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
         }
 
       }
-      case "Contact": ce('div', 'null', ce(HeaderComponent), ce(ContactComponent, {changePage: s => this.setState({page: s})}), ce(BaseComponent));
+      case "Contact": ce('div', 'null', ce(HeaderComponent), ce(ContactComponent, {changePage: page => this.setState(page)}), ce(BaseComponent));
     }
   }
 
@@ -49,7 +47,7 @@ class HeaderComponent extends React.Component {
   }
 
   render(){
-    ce('div', 'null', ce('h2', null, 'Cyber'), ce('h3', null, 'Cookies'),
+    ce('div', 'null', ce('h2', null, 'Cyber',ce('h3', null, 'Cookies')),
       ce('nav',{id: "navbar_home"},
         ce('button', {onClick: e => changePage("H")}, 'Home'),
         ce('button', {onClick: e => changePage("About")}, 'About Us'),
@@ -86,6 +84,10 @@ class HomeComponent extends React.Component {
     super(props);
   }
 
+  componentDidMount(){
+
+  }
+
   render(){
     ce('div',null,
       ce('h3',null,'Welcome one and all to your virtual connection with your girl scout cookie dealer'),
@@ -115,12 +117,12 @@ class AboutComponent extends React.Component {
       ce('h2',null,"Our Vision For The Future"),
       ce('br'),
       'We envision a bright future where anyone and everyone may enjoy delicious Girl Scout Cookies (TM).',
-      '  By connecting customers with Girl Scout Troops of their area, we will be able to ensure cookie enjoying throughout the United States and eventually the world',
+      '  By connecting customers with Girl Scout Troops of their area, we will be able to ensure the enjoyment of cookies throughout the United States and eventually the world',
       ce('br'),
       //Company History
       ce('h2',null,'Our History'),
       ce('br'),
-      'Founded in 2017 by a group of visionaries, we at _______ quickly expanded from our home in San Antonio into the surround areas of Central Texas.  Since then, the team as expanded rapidly and __________',
+      'Founded in 2017 by a group of visionaries, we at _______ quickly expanded from our home in San Antonio into the surrounding areas of Central Texas.  Since then, the team as expanded rapidly and __________',
       //Photos and descriptions for us
       ce('h2',null,'Who We Are')
     );
@@ -162,12 +164,12 @@ class LoginCustComponent extends React.Component {
   }
 
   login(e) {
-    const user = this.state.username;
-    const pass = this.state.password;
+    const username = this.state.username;
+    const password = this.state.password;
     fetch(validateCustRoute, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
-        body: JSON.stringify({user, pass})
+        body: JSON.stringify({username, password})
     }).then(res => res.json()).then(data => {
       console.log(data);
       if(data) {
@@ -202,12 +204,12 @@ class LoginTroopComponent extends React.Component {
   }
 
   login(e) {
-    const user = this.state.troop_no;
+    const no = this.state.troop_no;
     const pass = this.state.password;
     fetch(validateTroopRoute, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
-        body: JSON.stringify({user, pass})
+        body: JSON.stringify({no, pass})
     }).then(res => res.json()).then(data => {
       console.log(data);
       if(data) {

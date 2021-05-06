@@ -1,6 +1,20 @@
 @()(implicit request: RequestHeader, flash: Flash)
 
 @main("Home"){
+  <input type="hidden" id="csrfToken" value="@helper.CSRF.getToken.value">
+  //const logInCust = document.getElementById("custLoginRoute").value;
+  //const logOutCust = document.getElementById("custLogoutRoute").value;
+  //const logInTroop = document.getElementById("troopLoginRoute").value;
+  //const logOutTroop = document.getElementById("troopLogoutRoute").value;
+  //const addCust = document.getElementById("newCustRoute").value;
+  //const addTroop = document.getElementById("newTroopRoute").value;
+  //const getAllCookies = document.getElementById("getCookiesRoute").value;
+
+
   <div id="main-root"></div>
   <script src="@routes.Assets.versioned("javascript/main.js")"></script>
+  <div id="basebar_home">
+    <a href="">Customer Login</a>
+    <a href="">Troop Login</a>
+  </div>
 }
