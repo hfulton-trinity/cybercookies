@@ -4,6 +4,9 @@
 
 # Home page
 GET        /                             controllers.Application.load
+GET        /cookiecollector              controllers.Application.getCookies
+GET        /customer                     controllers.CustController.load
+GET        /troop                        controllers.TroopController.load
 
 # Prefix must match `play.assets.urlPrefix`
 GET        /assets/*file                 controllers.Assets.at(file)
