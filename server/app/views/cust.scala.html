@@ -1,0 +1,11 @@
+@()(implicit request: RequestHeader, flash: Flash)
+
+@main("Home"){
+  <input type="hidden" id="csrfToken" value="@helper.CSRF.getToken.value">
+  <input type="hidden" id="getCookiesRoute" value="@routes.Application.getCookies()">
+  <input type="hidden" id="custPageRoute" value="@routes.CustController.load()">
+  <input type="hidden" id="troopPageRoute" value="@routes.TroopController.load()">
+
+  <div id="main-root"></div>
+  <script src="@routes.Assets.versioned("javascript/cust.js")"></script>
+}

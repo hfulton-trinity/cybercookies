@@ -115,7 +115,7 @@ class HomeComponent extends React.Component {
       ce('h3',null,'Welcome one and all to your virtual connection with your girl scout cookie dealer'),
       ce('h5',null,'Most Popular Cookies'),
       ce('div',{id: "cookie_bar"},
-        ce('img', {src: "images/ThinMints.jpg"},null)
+        //ce('img', {src: "images/ThinMints.jpg"},null)
         //images here with hover method
       )
     );
@@ -147,8 +147,9 @@ class AboutComponent extends React.Component {
       ce('br'),
       'Founded in 2017 by a group of visionaries, we at _______ quickly expanded from our home in San Antonio into the surrounding areas of Central Texas.  Since then, the team as expanded rapidly and __________',
       //Photos and descriptions for us
-      ce('h2',null,'Who We Are')
+      ce('h2',null,'Who We Are'),
       //INSERT photos and descriptions
+      //ce('img',{src: "images/cybercookiesstaff.png"},null)
     );
   }
 }
