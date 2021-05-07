@@ -55,7 +55,7 @@ class HeaderComponent extends React.Component {
           ce('button', {onClick: e => this.handleChange(e,"Order")}, 'Place Order'),
           ce('button', {onClick: e => this.handleChange(e,"Cart")}, 'Cart'),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us'),
-          ce('button', {onClick: e => /*logout method*/}, 'Logout')
+          //ce('button', {onClick: e => /*logout method*/}, 'Logout')
         )
     );
   }
