@@ -2,7 +2,10 @@
 
 @main("Troop Home"){
    
-  
-  <div id="react-root"></div>
+  <input type="hidden" id="csrfToken" value="@helper.CSRF.getToken.value">
+  <input type="hidden" id="getCookiesRoute" value="@routes.Application.getCookies()">
+  <!-- <input type="hidden" id="custPageRoute" value="@routes.CustController.load()"> -->
+  <input type="hidden" id="troopPageRoute" value="@routes.TroopController.load()">
+  <div id="troop-root"></div>
   <script src="@routes.Assets.versioned("javascript/troop.js")"></script>
 }
