@@ -218,9 +218,10 @@ class StockComponent extends React.Component {
 
   render(){
     return ce('div', null,
-      'Search for cookies: ', ce('input',{type: "text", value: this.state.search, onChange: e => this.typingHandler(e)}),
-      //Show cookies??? Image, name, descrip, price, avail
-      //quantity input, add to cart button
+      ce('h2',null, 'Current Stock'),
+      ce('div',{id:'Current_Stock'}),//IDK how to have the input field for each cookie price actually change something
+      ce('h2',null,'Enter Inventory'),
+      ce('div',{id:'Enter_Inventory'})
     );
   }
 
@@ -240,15 +241,11 @@ class BookKeepingComponent extends React.Component {
 
   render(){
     return ce('div',null,
-      ce('div', {id: "Stock"},
-        ce('h2', null, 'How much moneys'),
-        //Table??
-        ce('table', {id: "Stock"},
-          ce('tbody', null,
-            //table fillings
-          )
-        )
-      )
+      ce('h2',null, 'Transaction List'),
+      ce('div',{id:'Transac_List'}),
+      ce('h2',null,'Monthly Sales'),
+      ce('div',{id:'Month_Sales'})
+    
     );
   }
 
