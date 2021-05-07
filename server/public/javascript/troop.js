@@ -9,7 +9,7 @@ const csrfToken = document.getElementById("csrfToken").value;
 class TroopMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: false};
+    this.state = {page: "H", loggedIn: true};
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
@@ -22,11 +22,11 @@ class TroopMainComponent extends React.Component {
     if(this.state.loggedIn){
       console.log(this.state.page);
       switch(this.state.page) {
-        case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(HomeComponent));
-        case "Order": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(OrderComponent));
-        case "Cart": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(CartComponent));
+        case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}),ce(HomeComponent));
+        case "Stock": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(StockComponent));
+        case "BookKeeping": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(BookKeepingComponent));
         case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(ContactComponent));
-        case _: return ce('p',null,'FAIL');
+        default: return ce('p',null,'FAIL');
       }
     } else {
       return ce('div', null, ce(LoginTroopComponent));
@@ -53,8 +53,8 @@ class HeaderComponent extends React.Component {
     return ce('div', 'null', ce('h2', null, 'CyberCookies'),
         ce('nav',{id: "navbar_home"},
           ce('button', {onClick: e => this.handleChange(e,"H")}, 'Home'),
-          ce('button', {onClick: e => this.handleChange(e,"Order")}, 'Place Order'),
-          ce('button', {onClick: e => this.handleChange(e,"Cart")}, 'Cart'),
+          ce('button', {onClick: e => this.handleChange(e,"Stock")}, 'SetStock'),
+          ce('button', {onClick: e => this.handleChange(e,"BookKeeping")}, 'BookKeeping'),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us'),
           ce('button', {onClick: e => this.handleChange(e,"H")}, 'Logout')
         )
@@ -79,36 +79,28 @@ class LoginTroopComponent extends React.Component {
   }
   render(){
     return ce('div', null, 
-    ce('h1', null, "This is a test of the rendererer"),
     ce('h2', null, 'Login'),
     ce('br'),
-    'Username: ', ce('input',{type:"text",value:this.state.username, onChange: e=> this.typingHandler(e)}),
+    'Username: ', 
+    ce('input', {type: "text", id: "loginName", value: this.state.username, onChange: e => this.changerHandler(e)}),
     ce('br'),
-    'Password: ', ce('input',{type:"text",value:this.state.password,onChange: e=> this.typingHandler(e)}),
+    'Password: ',
+    ce('input', {type: "password", id: "loginPass", value: this.state.password, onChange: e => this.changerHandler(e)}),
     ce('br'),
     ce('button', {onClick: e=> this.login(e)},'login'),
-    ce('span', {id: "login-message"}, this.state.loginErrorInfo)
+    ce('span', {id: "login-message"}, this.state.loginErrorInfo),
+    ce('h2', null, 'Create User:'),
+    ce('br'),
+    'Username: ',
+    ce('input', {type: "text", id: "createName", value: this.state.new_username, onChange: e => this.changerHandler(e)}),
+    ce('br'),
+    'Password: ',
+    ce('input', {type: "password", id: "createPass", value: this.state.new_password, onChange: e => this.changerHandler(e)}),
+    ce('br'),
+    ce('button', {onClick: e => this.makeUser(e)}, 'Create User'),
+    ce('span', {id: "create-message"}, this.state.createErrorInfo)
     );
   }
-  // render(){
-  //   return ce('div', null, 
-  //   ce('form', {id = "Troop_login"},
-  //       ce('h2',null,'Login'),
-  //       'Username:',ce('input',{type: "text", value: this.state.username, onChange: e => this.typingHandler(e)}),
-  //       ce('br'),'Password:',ce('input',{type: "text", value: this.state.password, onChange: e => this.typingHandler(e)}),
-  //       ce('br'), ce('button', {onClick: e => login(e)}, 'Login'), ce('br')
-  //     ), ce('form', {id = "create_Troop"},
-  //       ce('h2',null,'Create a Troop Account'),
-  //       'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
-  //       'Username:',ce('input',{type: "text", value: this.state.new_username, onChange: e => this.typingHandler(e)}),
-  //       ce('br'),'Password:',ce('input',{type: "text", value: this.state.new_password, onChange: e => this.typingHandler(e)}),
-  //       'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
-  //       ce('br'),'Troop:',ce('input',{type: "number", value: this.state.troop, onChange: e => this.typingHandler(e)}),
-  //       ce('br'), ce('button', {onClick: e => makeUser()}, 'Create Account')
-  //     ), ce('br'), ce('button', {onClick: e => transferTroop(e)}, 'Click here if you are a troop')
-  //   );
-  // }
-
   transferTroop(e){
     ce('Redirect',{to: troopPage});
   }
@@ -116,7 +108,12 @@ class LoginTroopComponent extends React.Component {
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
     console.log([e.target['id']]);
+    console.log([e.target.value]);
   }
+  changerHandler(e) {
+    this.setState({ [e.target['id']]: e.target.value });
+  }
+
 
   login(e) {
     const username = this.state.username;
@@ -185,24 +182,33 @@ class HomeComponent extends React.Component {
   }
   //need to load in things
   render(){
-    return ce('div', null,
-      ce('h2',null,'Next Scheduled Delivery'),
-      ce('div',{id: "delivery_details"},
-        'Troop: ', ce(),
-        'Delivery Estimate: ', ce(), ' ', ce(),
-        ce('link',{},'Click here to view order receipt')
-      ),
-      ce('h2',null,'Contact Your Troop'),
-      ce('div',{id: "contact_troop"},
-        'Your troop would love to hear from you with any questions or concerns.',
-        ' In the case of special delivery instructions, accommodations are made on a case by case basis and are fulfilled at the troop’s discretion. ',
-        ce('link',{},'Click here to email your troop directly'),', or feel free to use the Contact Us page if you would like to speak with corporate.'
-      )
+    return ce('div',null,
+      ce('h2', null, 'Upcoming Orders'),
+      ce('div',{id:"order_details"}),
+
+      ce('h2', null, 'Out of Stock Cookies'),
+      ce('div',{id:"out_stock_details"})
+    
+    
     );
+    // return ce('div', null,
+    //   ce('h2',null,'Next Scheduled Delivery'),
+    //   ce('div',{id: "delivery_details"},
+    //     'Troop: ', ce(),
+    //     'Delivery Estimate: ', ce(), ' ', ce(),
+    //     ce('link',{},'Click here to view order receipt')
+    //   ),
+    //   ce('h2',null,'Contact Your Troop'),
+    //   ce('div',{id: "contact_troop"},
+    //     'Your troop would love to hear from you with any questions or concerns.',
+    //     ' In the case of special delivery instructions, accommodations are made on a case by case basis and are fulfilled at the troop’s discretion. ',
+    //     ce('link',{},'Click here to email your troop directly'),', or feel free to use the Contact Us page if you would like to speak with corporate.'
+    //   )
+    // );
   }
 }
 
-class OrderComponent extends React.Component {
+class StockComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
@@ -224,50 +230,24 @@ class OrderComponent extends React.Component {
   }
 }
 
-class CartComponent extends React.Component {
+class BookKeepingComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      address: "",
-      street: "",
-      city: "",
-      state: "",
-      country: "",
-      zip: 0,
-      apt: 0,
-      card_no: "",
-      crv: "",
-      exp: ""/*date??*/
+      
     };
   }
 
   render(){
     return ce('div',null,
-      ce('div', {id: "order"},
-        ce('h2', null, 'Current Order'),
+      ce('div', {id: "Stock"},
+        ce('h2', null, 'How much moneys'),
         //Table??
-        ce('table', {id: "order"},
+        ce('table', {id: "Stock"},
           ce('tbody', null,
             //table fillings
           )
         )
-      ), ce('aside',{id: "checkout"},
-        'Shipping Address:', ce('br'),
-        'Street: ', ce('input',{type: "text", value: this.state.street, onChange: e => this.typingHandler(e)}), ce('br'),
-        'Apt: ', ce('input',{type: "number", value: this.state.apt, onChange: e => this.typingHandler(e)}), ce('br'),
-        'City: ', ce('input',{type: "text", value: this.state.city, onChange: e => this.typingHandler(e)}), ce('br'),
-        'State: ', ce('input',{type: "text", value: this.state.state, onChange: e => this.typingHandler(e)}), ce('br'),
-        'Country: ', ce('input',{type: "text", value: this.state.country, onChange: e => this.typingHandler(e)}), ce('br'),
-        'Zip Code: ', ce('input',{type: "number", value: this.state.zip, onChange: e => this.typingHandler(e)}), ce('br'),
-        'Estimated Time/Date of Delivery:', ce('br'),
-        //Date and time Here
-        'Payment Info: (This is super duper secure so please use real card info)', ce('br'),
-        'Card No.: ', ce('input',{type: "text", value: this.state.card_no, onChange: e => this.typingHandler(e)}),
-        ce('br'),
-        'CSV: ', ce('input',{type: "text", value: this.state.crv, onChange: e => this.typingHandler(e)}),
-        //Date???
-        'Exp. Date: ', ce('input',{type: "date", value: this.state.exp, onChange: e => this.typingHandler(e)}),
-        ce('br'), ce('button', {/*store order*/}, 'Confirm and order')
       )
     );
   }
