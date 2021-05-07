@@ -145,11 +145,10 @@ class AboutComponent extends React.Component {
       //Company History- NEEDS WORK
       ce('h2',null,'Our History'),
       ce('br'),
-      'Founded in 2017 by a group of visionaries, we at _______ quickly expanded from our home in San Antonio into the surrounding areas of Central Texas.  Since then, the team as expanded rapidly and __________',
+      'Founded in 1719 by a group of visionaries, we at _______ quickly expanded from our home in San Antonio into the surrounding areas of Central Texas.  Since then, the team as expanded rapidly and __________',
       //Photos and descriptions for us
-      ce('h2',null,'Who We Are'),
+      ce('h2',null,'Who We Are')
       //INSERT photos and descriptions
-      //ce('img',{src: "images/cybercookiesstaff.png"},null)
     );
   }
 }

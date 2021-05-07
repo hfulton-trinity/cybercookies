@@ -33,7 +33,7 @@ class CustomerMainComponent extends React.Component {
   }
 
 }
-
+//Header component- from main- done
 class HeaderComponent extends React.Component {
   constructor(props){
     super(props);
@@ -65,14 +65,14 @@ class LoginCustComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      username: "", 
-      password: "", 
+      username: "",
+      password: "",
       loginErrorInfo: "",
       name: "",
-      new_username: "", 
-      new_password: "", 
-      email: "", 
-      troop: "", 
+      new_username: "",
+      new_password: "",
+      email: "",
+      troop: 0,
       createErrorInfo: ""
     };
   }
@@ -89,7 +89,7 @@ class LoginCustComponent extends React.Component {
         'Username:',ce('input',{type: "text", value: this.state.new_username, onChange: e => this.typingHandler(e)}),
         ce('br'),'Password:',ce('input',{type: "text", value: this.state.new_password, onChange: e => this.typingHandler(e)}),
         'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
-        ce('br'),'Troop:',ce('input',{type: "text", value: this.state.troop, onChange: e => this.typingHandler(e)}),
+        ce('br'),'Troop:',ce('input',{type: "number", value: this.state.troop, onChange: e => this.typingHandler(e)}),
         ce('br'), ce('button', {onClick: e => makeUser()}, 'Create Account')
       ), ce('br'), ce('button', {onClick: e => transferTroop(e)}, 'Click here if you are a troop')
     );
@@ -141,6 +141,7 @@ class LoginCustComponent extends React.Component {
   }
 }
 
+//Contact component- from main- done
 class ContactComponent extends React.Component {
   constructor(props){
     super(props);
@@ -164,25 +165,102 @@ class ContactComponent extends React.Component {
   }
 }
 
-class OrderComponent extends React.Component {
+class HomeComponent extends React.Component {
   constructor(props){
     super(props);
   }
+  //need to load in things
+  render(){
+    return ce('div', null,
+      ce('h2',null,'Next Scheduled Delivery'),
+      ce('div',{id: "delivery_details"},
+        'Troop: ', ce(),
+        'Delivery Estimate: ', ce(), ' ', ce(),
+        ce('link',{},'Click here to view order receipt')
+      ),
+      ce('h2',null,'Contact Your Troop'),
+      ce('div',{id: "contact_troop"},
+        'Your troop would love to hear from you with any questions or concerns.',
+        ' In the case of special delivery instructions, accommodations are made on a case by case basis and are fulfilled at the troop’s discretion. ',
+        ce('link',{},'Click here to email your troop directly'),', or feel free to use the Contact Us page if you would like to speak with corporate.'
+      )
+    );
+  }
+}
+
+class OrderComponent extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      search: ""
+    };
+  }
 
   render(){
+    return ce('div', null,
+      'Search for cookies: ', ce('input',{type: "text", value: this.state.search, onChange: e => this.typingHandler(e)}),
+      //Show cookies??? Image, name, descrip, price, avail
+      //quantity input, add to cart button
+    );
+  }
 
+  typingHandler(e) {
+    this.setState({[e.target['id']]: e.target.value});
+    console.log([e.target['id']]);
   }
 }
 
 class CartComponent extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      address: "",
+      street: "",
+      city: "",
+      state: "",
+      country: "",
+      zip: 0,
+      apt: 0,
+      card_no: "",
+      crv: "",
+      exp: ""/*date??*/
+    };
   }
 
   render(){
-    
+    return ce('div',null,
+      ce('div', {id: "order"},
+        ce('h2', null, 'Current Order'),
+        //Table??
+        ce('table', {id: "order"},
+          ce('tbody', null,
+            //table fillings
+          )
+        )
+      ), ce('aside',{id: "checkout"},
+        'Shipping Address:', ce('br'),
+        'Street: ', ce('input',{type: "text", value: this.state.street, onChange: e => this.typingHandler(e)}), ce('br'),
+        'Apt: ', ce('input',{type: "number", value: this.state.apt, onChange: e => this.typingHandler(e)}), ce('br'),
+        'City: ', ce('input',{type: "text", value: this.state.city, onChange: e => this.typingHandler(e)}), ce('br'),
+        'State: ', ce('input',{type: "text", value: this.state.state, onChange: e => this.typingHandler(e)}), ce('br'),
+        'Country: ', ce('input',{type: "text", value: this.state.country, onChange: e => this.typingHandler(e)}), ce('br'),
+        'Zip Code: ', ce('input',{type: "number", value: this.state.zip, onChange: e => this.typingHandler(e)}), ce('br'),
+        'Estimated Time/Date of Delivery:', ce('br'),
+        //Date and time Here
+        'Payment Info: (This is super duper secure so please use real card info)', ce('br'),
+        'Card No.: ', ce('input',{type: "text", value: this.state.card_no, onChange: e => this.typingHandler(e)}),
+        ce('br'),
+        'CSV: ', ce('input',{type: "text", value: this.state.crv, onChange: e => this.typingHandler(e)}),
+        //Date???
+        'Exp. Date: ', ce('input',{type: "date", value: this.state.exp, onChange: e => this.typingHandler(e)}),
+        ce('br'), ce('button', {/*store order*/}, 'Confirm and order')
+      )
+    );
   }
+
+  //Transaction(customer: String, seller: Int, deliveryMethod: String, deliveryInstructions: String, address: Address, date_ordered: Date)
 }
+
 
 ReactDOM.render(
   React.createElement(CustomerMainComponent, null, null),
