@@ -4,6 +4,8 @@
   <input type="hidden" id="csrfToken" value="@helper.CSRF.getToken.value">
   <input type="hidden" id="getCookiesRoute" value="@routes.Application.getCookies()">
   <input type="hidden" id="custPageRoute" value="@routes.CustController.load()">
+  <input type="hidden" id="custLoginRoute" value="@routes.CustController.validateCustomer()">
+  <input type="hidden" id="newCustRoute" value="@routes.CustController.newCustomer()">
   <input type="hidden" id="troopPageRoute" value="@routes.TroopController.load()">
   <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
 

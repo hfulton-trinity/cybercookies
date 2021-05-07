@@ -18,7 +18,7 @@ class CustomerMainComponent extends React.Component {
   }
 
   render(){
-    if(loggedIn){
+    if(this.state.loggedIn){
       console.log(this.state.page);
       switch(this.state.page) {
         case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(HomeComponent));
@@ -28,7 +28,7 @@ class CustomerMainComponent extends React.Component {
         case _: return ce('p',null,'FAIL');
       }
     } else {
-      return ce('div', null, ce(LoginCustComponent));
+      return ce('div', null, ce(LoginCustComponent, {doLogin: () => this.setState({loggedIn: true})}));
     }
   }
 
@@ -55,9 +55,13 @@ class HeaderComponent extends React.Component {
           ce('button', {onClick: e => this.handleChange(e,"Order")}, 'Place Order'),
           ce('button', {onClick: e => this.handleChange(e,"Cart")}, 'Cart'),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us'),
-          //ce('button', {onClick: e => /*logout method*/}, 'Logout')
+          ce('button', {onClick: e => this.logout(e)}, 'Logout')
         )
     );
+  }
+
+  logout(e){
+    //implement logout method
   }
 }
 
@@ -78,18 +82,18 @@ class LoginCustComponent extends React.Component {
   }
 
   render(){
-    return ce('div', null, ce('form', {id = "cust_login"},
+    return ce('div', null, ce('form', {id: "cust_login"},
         ce('h2',null,'Login'),
-        'Username:',ce('input',{type: "text", value: this.state.username, onChange: e => this.typingHandler(e)}),
-        ce('br'),'Password:',ce('input',{type: "text", value: this.state.password, onChange: e => this.typingHandler(e)}),
+        'Username:',ce('input',{type: "text", id: "username", value: this.state.username, onChange: e => this.typingHandler(e)}),
+        ce('br'),'Password:',ce('input',{type: "text", id: "password", value: this.state.password, onChange: e => this.typingHandler(e)}),
         ce('br'), ce('button', {onClick: e => login(e)}, 'Login'), ce('br')
-      ), ce('form', {id = "create_customer"},
+      ), ce('form', {id: "create_customer"},
         ce('h2',null,'Create a Customer Account'),
-        'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
-        'Username:',ce('input',{type: "text", value: this.state.new_username, onChange: e => this.typingHandler(e)}),
-        ce('br'),'Password:',ce('input',{type: "text", value: this.state.new_password, onChange: e => this.typingHandler(e)}),
-        'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
-        ce('br'),'Troop:',ce('input',{type: "number", value: this.state.troop, onChange: e => this.typingHandler(e)}),
+        'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),
+        ce('br'),'Username:',ce('input',{type: "text", id: "new_username", value: this.state.new_username, onChange: e => this.typingHandler(e)}),
+        ce('br'),'Password:',ce('input',{type: "text", id: "new_password", value: this.state.new_password, onChange: e => this.typingHandler(e)}),
+        ce('br'),'Email:',ce('input',{type: "text", id: "email", value: this.state.email, onChange: e => this.typingHandler(e)}),
+        ce('br'),'Troop:',ce('input',{type: "number", id: "troop", value: this.state.troop, onChange: e => this.typingHandler(e)}),
         ce('br'), ce('button', {onClick: e => makeUser()}, 'Create Account')
       ), ce('br'), ce('button', {onClick: e => transferTroop(e)}, 'Click here if you are a troop')
     );
@@ -100,6 +104,7 @@ class LoginCustComponent extends React.Component {
   }
 
   typingHandler(e) {
+    console.log(e.target.value);
     this.setState({[e.target['id']]: e.target.value});
     console.log([e.target['id']]);
   }
@@ -114,7 +119,7 @@ class LoginCustComponent extends React.Component {
     }).then(res => res.json()).then(data => {
       console.log(data);
       if(data) {
-        //switch to customer page
+        this.props.doLogin();
       } else {
         this.setState({loginErrorInfo: "Do not pass GO"});
       }
@@ -133,7 +138,7 @@ class LoginCustComponent extends React.Component {
         body: JSON.stringify({"name": nname, "user": nuser , "pass": npass, "email": cemail, "troop": troop })
     }).then(res => res.json()).then(data => {
       if(data) {
-
+        this.props.doLogin();
       } else {
         this.setState({createErrorInfo: "You are not welcome here"});
       }
@@ -152,9 +157,9 @@ class ContactComponent extends React.Component {
     return ce('form', {id: "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
-      'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
-      ce('br'),'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
-      ce('br'),'Comments:',ce('input',{type: "text", value: this.state.message, onChange: e => this.typingHandler(e)}),
+      'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Email:',ce('input',{type: "text", id: "email", value: this.state.email, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Comments:',ce('input',{type: "text", id: "message", value: this.state.message, onChange: e => this.typingHandler(e)}),
       ce('br'), ce('button', null, 'Send')
     );
   }

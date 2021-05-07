@@ -7,18 +7,21 @@ import models.UserModel
 import models.TroopModel
 import models._
 import play.api.libs.json._
+import shared.SharedMessages._
 
 @Singleton
 class CustController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
+  val model = UserModel()
+
   def load = Action{ implicit request =>
     Ok(views.html.cust())
   }
-/*
+
   //Figure out database interactions
 
-  implicit val custDataReads = Json.reads[CustData]
-  implicit val troopDataReads = Json.reads[TroopData]
+  implicit val userDataReads = Json.reads[UserData]
+  implicit val newUserDataReads = Json.reads[NewUserData]
 
   def withJsonBody[A](f: A => Result)(implicit request: Request[AnyContent], reads: Reads[A]) = {
     request.body.asJson.map { body =>
@@ -35,8 +38,8 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def validateCustomer = Action { implicit request =>
-    withJsonBody[CustData] {ud =>
-      if(UserModel.logIn(ud.username, ud.password)){
+    withJsonBody[UserData] {ud =>
+      if(model.logIn(ud.username, ud.password)){
         Ok(Json.toJson(true))
           .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
       } else {
@@ -47,14 +50,15 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   def newCustomer = Action { implicit request =>
   //NEEDS WORK
-    withJsonBody[CustData] {ud =>
-      if(UserModel.logIn(ud.username, ud.password)){
+  Ok(Json.toJson(false))
+  /*
+    withJsonBody[NewUserData] {ud =>
+      if(model.newUser(User(ud.user, ud.pass, ud.email, ud.name, ud.troop))){
         Ok(Json.toJson(true))
-          .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+          .withSession("username" -> ud.user, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
       } else {
         Ok(Json.toJson(false))
       }
-    }
+    }*/
   }
-  */
 }
