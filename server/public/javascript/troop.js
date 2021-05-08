@@ -3,13 +3,19 @@
 
 const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
-//const logInCust = document.getElementById("custLoginRoute").value;
-//const addTroop = document.getElementById("newTroopRoute").value;
+// const validateTroop=document.getElementById("troopValidateRoute").value;
+// const addTroop=document.getElementById("addTroopRoute").value;
+// const allOrders=document.getElementById("allOrdersRoute").value;
+// const OutStock=document.getElementById("OutStockRoute").value;
+// const AllStock=document.getElementById("AllStockRoute").value;
+// const allTrans=document.getElementById("TroopTransRoute").value;
+// const sales=document.getElementById("TroopSalesRoute").value;
+// const addStock=document.getElementById("AddStockRoute").value;
 
 class TroopMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: false};
+    this.state = {page: "H", loggedIn: true};
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
@@ -29,7 +35,7 @@ class TroopMainComponent extends React.Component {
         default: return ce('p',null,'FAIL');
       }
     } else {
-      return ce('div', null, ce(LoginTroopComponent));
+      return ce(LoginTroopComponent,{doLogin: ()=>this.setState({loggedIn:true})});
     }
   }
 
@@ -56,7 +62,8 @@ class HeaderComponent extends React.Component {
           ce('button', {onClick: e => this.handleChange(e,"Stock")}, 'SetStock'),
           ce('button', {onClick: e => this.handleChange(e,"BookKeeping")}, 'BookKeeping'),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us'),
-          ce('button', {onClick: e => this.handleChange(e,"H")}, 'Logout')
+          //ce('button', {onClick: e => this.handleChange(e,"H")}, 'Logout')//TODO log out feature
+          ce('button',{onClick: e=> this.props.doLogout()}, 'Log Out')
         )
     );
   }
@@ -69,15 +76,12 @@ class LoginTroopComponent extends React.Component {
       username: "",
       password: "",
       loginErrorInfo: "",
-      name: "",
       new_username: "",
       new_password: "",
-      email: "",
-      troop: 0,
       createErrorInfo: ""
     };
   }
-  render(){//TODO fix changerHandler
+  render(){
     return ce('div', null, 
     ce('h2', null, 'Login'),
     ce('br'),
@@ -98,17 +102,16 @@ class LoginTroopComponent extends React.Component {
     ce('input', {type: "password", id: "new_password", value: this.state.new_password, onChange: e => this.changerHandler(e)}),
     ce('br'),
     ce('button', {onClick: e => this.makeUser(e)}, 'Create User'),
-    ce('span', {id: "create-message"}, this.state.createErrorInfo)
+    ce('span', {id: "create-message"}, this.state.createErrorInfo),
+    ce('br'), ce('button', {onClick: e => transferTroop(e)}, 'Click here for the regular login page')
     );
   }
-  // transferTroop(e){
-  //   ce('Redirect',{to: troopPage});
-  // }
+   transferTroop(e){//TODO fix
+     ce('Redirect',{to: custPage});
+   }
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
-    console.log([e.target['id']]);
-    console.log([e.target.value]);
   }
   changerHandler(e) {
     this.setState({ [e.target['id']]: e.target.value });
@@ -125,8 +128,7 @@ class LoginTroopComponent extends React.Component {
     }).then(res => res.json()).then(data => {
       console.log(data);
       if(data) {
-        //fill in relevant info
-        //switch to Troop page//TODO
+        this.props.doLogin();
       } else {
         this.setState({loginErrorInfo: "Login Failed"});
       }
@@ -145,8 +147,7 @@ class LoginTroopComponent extends React.Component {
         body: JSON.stringify({"name": nname, "user": nuser , "pass": npass, "email": cemail, "troop": troop })
     }).then(res => res.json()).then(data => {
       if(data) {
-        //fill in relevant info
-        //TODO switch to Troop Page
+        this.props.doLogin();
       } else {
         this.setState({createErrorInfo: "Make New Troop Failed"});
       }
@@ -173,14 +174,14 @@ class ContactComponent extends React.Component {
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
-    console.log([e.target['id']]);
+   
   }
 }
 
 class HomeComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state={orders: [], out: []};
+    this.state={orders: ["test order 1", "test order 2"], out: ["test out 1", "test out 2"]};
   }
 
   compmonentDidMount(){
@@ -190,28 +191,26 @@ class HomeComponent extends React.Component {
   render(){
     return ce('div',null,
       ce('h2', null, 'Upcoming Orders'),
-      ce('div',{id:"order_details"}),//TODO flesh out div
-
+      ce('div',{id:"order_details"},
+        ce('ul',null,this.state.orders.map((order,index)=>ce('li',{key:index},order)))
+      ),
+    ce('br'),
       ce('h2', null, 'Out of Stock Cookies'),
-      ce('div',{id:"out_stock_details"})//TODO flesh out div
-    
-    
+      ce('div',{id:"out_stock_details"},ce('ul',null,this.state.out.map((order,index)=>ce('li',{key:index},order))))
+      
     );
-
   }
 
   loadOrders(){
     //TODO load all orders from troop
+    //fetch allOrders
   }
 
 
   loadOut(){
     //TODO load all out of stock cookies
+    //fetch all OutStock
   }
-
-
-
-
 
 }
 
@@ -219,7 +218,9 @@ class StockComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      //TODO figure out states
+      Stock:["TEST stock 1", "test stock 2"],
+      new_cookie:"",
+      new_amount:""
     };
   }
   compmonentDidMount(){
@@ -229,18 +230,27 @@ class StockComponent extends React.Component {
   render(){
     return ce('div', null,
       ce('h2',null, 'Current Stock'),
-      ce('div',{id:'Current_Stock'}),//TODO fill out div
+      ce('div',{id:'Current_Stock'},
+        ce('ul',null,this.state.Stock.map((stock,index)=>ce('li',{key:index},stock)))),
       ce('h2',null,'Enter Inventory'),
-      ce('div',{id:'Enter_Inventory'})//TODO fill out div// Inputs that send message
+      ce('div',{id:'Enter_Inventory'},
+          ce('input',{type:'text',id:"new_cookie",value:this.state.new_cookie,onChange: e=>this.typingHandler(e)}),
+          ce('br'),
+          ce('input',{type:'text',id:"new_amount",value:this.state.new_amount,onChange: e=>this.typingHandler(e)}),
+          ce('br'),
+          ce('button',{onClick:e=>this.SendStock(e)},'Update Stock'))
     );
   }
   loadStock(){
     //TODO load the current stock of all cookies
+    //fetch AllStock
   }
-
+  SendStock(e){
+    //TODO
+  }
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
-    console.log([e.target['id']]);
+    
   }
 }
 
@@ -249,6 +259,8 @@ class BookKeepingComponent extends React.Component {
     super(props);
     this.state = {
       //TODO figure out what will be tracked
+      transactions:["Test transaction 1", "Test Transaction 2"],
+      sales:["Test Sale1", "Test Sale2"]
     };
   }
   compmonentDidMount(){
@@ -258,19 +270,23 @@ class BookKeepingComponent extends React.Component {
   render(){
     return ce('div',null,
       ce('h2',null, 'Transaction List'),
-      ce('div',{id:'Transac_List'}),//TODO flesh out div
+      ce('div',{id:'Transac_List'},
+      ce('ul', null,this.state.transactions.map((message, index) => ce('li', { key: index }, message))),
+      ce('br')),//TODO flesh out div
       ce('h2',null,'Monthly Sales'),
-      ce('div',{id:'Month_Sales'})//TODO flesh out div
+      ce('div',{id:'Month_Sales'},ce('ul', null,this.state.sales.map((message, index) => ce('li', { key: index }, message))))//TODO flesh out div
     
     );
   }
 
   loadTrans(){
-    //TODO load all transactions into list  
+    //TODO load all transactions into list 
+    //fetch allTrans
   }
 
   loadSales(){
     //TODO fill out summary div
+    //fetch sales
   }
 }
 

@@ -10,6 +10,10 @@ GET        /troop                        controllers.TroopController.load
 POST       /validateCustomer             controllers.CustController.validateCustomer
 POST       /createCustomer               controllers.CustController.newCustomer
 
+
+#Troop page
+#POST        /validateTroop              controllers.TroopController.validate
+
 # Prefix must match `play.assets.urlPrefix`
 GET        /assets/*file                 controllers.Assets.at(file)
 GET        /versionedAssets/*file        controllers.Assets.versioned(path="/public", file: Asset)
