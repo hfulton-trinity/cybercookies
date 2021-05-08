@@ -9,7 +9,7 @@ const csrfToken = document.getElementById("csrfToken").value;
 class TroopMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: true};
+    this.state = {page: "H", loggedIn: false};
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
@@ -34,7 +34,7 @@ class TroopMainComponent extends React.Component {
   }
 
 }
-//Header component- from main- done
+
 class HeaderComponent extends React.Component {
   constructor(props){
     super(props);
@@ -77,33 +77,33 @@ class LoginTroopComponent extends React.Component {
       createErrorInfo: ""
     };
   }
-  render(){
+  render(){//TODO fix changerHandler
     return ce('div', null, 
     ce('h2', null, 'Login'),
     ce('br'),
     'Username: ', 
-    ce('input', {type: "text", id: "loginName", value: this.state.username, onChange: e => this.changerHandler(e)}),
+    ce('input', {type: "text", id: "username", value: this.state.username, onChange: e => this.changerHandler(e)}),
     ce('br'),
     'Password: ',
-    ce('input', {type: "password", id: "loginPass", value: this.state.password, onChange: e => this.changerHandler(e)}),
+    ce('input', {type: "password", id: "password", value: this.state.password, onChange: e => this.changerHandler(e)}),
     ce('br'),
     ce('button', {onClick: e=> this.login(e)},'login'),
     ce('span', {id: "login-message"}, this.state.loginErrorInfo),
     ce('h2', null, 'Create User:'),
     ce('br'),
     'Username: ',
-    ce('input', {type: "text", id: "createName", value: this.state.new_username, onChange: e => this.changerHandler(e)}),
+    ce('input', {type: "text", id: "new_username", value: this.state.new_username, onChange: e => this.changerHandler(e)}),
     ce('br'),
     'Password: ',
-    ce('input', {type: "password", id: "createPass", value: this.state.new_password, onChange: e => this.changerHandler(e)}),
+    ce('input', {type: "password", id: "new_password", value: this.state.new_password, onChange: e => this.changerHandler(e)}),
     ce('br'),
     ce('button', {onClick: e => this.makeUser(e)}, 'Create User'),
     ce('span', {id: "create-message"}, this.state.createErrorInfo)
     );
   }
-  transferTroop(e){
-    ce('Redirect',{to: troopPage});
-  }
+  // transferTroop(e){
+  //   ce('Redirect',{to: troopPage});
+  // }
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
@@ -125,9 +125,10 @@ class LoginTroopComponent extends React.Component {
     }).then(res => res.json()).then(data => {
       console.log(data);
       if(data) {
-        //switch to Troop page
+        //fill in relevant info
+        //switch to Troop page//TODO
       } else {
-        this.setState({loginErrorInfo: "Do not pass GO"});
+        this.setState({loginErrorInfo: "Login Failed"});
       }
     });
   }
@@ -144,15 +145,15 @@ class LoginTroopComponent extends React.Component {
         body: JSON.stringify({"name": nname, "user": nuser , "pass": npass, "email": cemail, "troop": troop })
     }).then(res => res.json()).then(data => {
       if(data) {
-
+        //fill in relevant info
+        //TODO switch to Troop Page
       } else {
-        this.setState({createErrorInfo: "You are not welcome here"});
+        this.setState({createErrorInfo: "Make New Troop Failed"});
       }
     });
   }
 }
 
-//Contact component- from main- done
 class ContactComponent extends React.Component {
   constructor(props){
     super(props);
@@ -162,10 +163,10 @@ class ContactComponent extends React.Component {
   render(){
     return ce('form', {id: "contact_us"},
       ce('h2',null,'Contact Us'),
-      ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
-      'Name:',ce('input',{type: "text", value: this.state.name, onChange: e => this.typingHandler(e)}),
-      ce('br'),'Email:',ce('input',{type: "text", value: this.state.email, onChange: e => this.typingHandler(e)}),
-      ce('br'),'Comments:',ce('input',{type: "text", value: this.state.message, onChange: e => this.typingHandler(e)}),
+      ce('p',null,'For general suggestions only.  For technical problems, idk figure it out.  Our typical response time is <never>!'),
+      'Name:',ce('input',{type: "text",  id: "name",value: this.state.name, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Email:',ce('input',{type: "text", id:"email", value: this.state.email, onChange: e => this.typingHandler(e)}),
+      ce('br'),'Comments:',ce('input',{type: "text",id:"message", value: this.state.message, onChange: e => this.typingHandler(e)}),
       ce('br'), ce('button', null, 'Send')
     );
   }
@@ -179,50 +180,62 @@ class ContactComponent extends React.Component {
 class HomeComponent extends React.Component {
   constructor(props){
     super(props);
+    this.state={orders: [], out: []};
   }
-  //need to load in things
+
+  compmonentDidMount(){
+    this.loadOrders();
+    this.loadOut();
+  }
   render(){
     return ce('div',null,
       ce('h2', null, 'Upcoming Orders'),
-      ce('div',{id:"order_details"}),
+      ce('div',{id:"order_details"}),//TODO flesh out div
 
       ce('h2', null, 'Out of Stock Cookies'),
-      ce('div',{id:"out_stock_details"})
+      ce('div',{id:"out_stock_details"})//TODO flesh out div
     
     
     );
-    // return ce('div', null,
-    //   ce('h2',null,'Next Scheduled Delivery'),
-    //   ce('div',{id: "delivery_details"},
-    //     'Troop: ', ce(),
-    //     'Delivery Estimate: ', ce(), ' ', ce(),
-    //     ce('link',{},'Click here to view order receipt')
-    //   ),
-    //   ce('h2',null,'Contact Your Troop'),
-    //   ce('div',{id: "contact_troop"},
-    //     'Your troop would love to hear from you with any questions or concerns.',
-    //     ' In the case of special delivery instructions, accommodations are made on a case by case basis and are fulfilled at the troop’s discretion. ',
-    //     ce('link',{},'Click here to email your troop directly'),', or feel free to use the Contact Us page if you would like to speak with corporate.'
-    //   )
-    // );
+
   }
+
+  loadOrders(){
+    //TODO load all orders from troop
+  }
+
+
+  loadOut(){
+    //TODO load all out of stock cookies
+  }
+
+
+
+
+
 }
 
 class StockComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      search: ""
+      //TODO figure out states
     };
+  }
+  compmonentDidMount(){
+    loadStock();
   }
 
   render(){
     return ce('div', null,
       ce('h2',null, 'Current Stock'),
-      ce('div',{id:'Current_Stock'}),//IDK how to have the input field for each cookie price actually change something
+      ce('div',{id:'Current_Stock'}),//TODO fill out div
       ce('h2',null,'Enter Inventory'),
-      ce('div',{id:'Enter_Inventory'})
+      ce('div',{id:'Enter_Inventory'})//TODO fill out div// Inputs that send message
     );
+  }
+  loadStock(){
+    //TODO load the current stock of all cookies
   }
 
   typingHandler(e) {
@@ -235,21 +248,30 @@ class BookKeepingComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      
+      //TODO figure out what will be tracked
     };
   }
-
+  compmonentDidMount(){
+    this.loadTrans();
+    this.loadSales();
+  }
   render(){
     return ce('div',null,
       ce('h2',null, 'Transaction List'),
-      ce('div',{id:'Transac_List'}),
+      ce('div',{id:'Transac_List'}),//TODO flesh out div
       ce('h2',null,'Monthly Sales'),
-      ce('div',{id:'Month_Sales'})
+      ce('div',{id:'Month_Sales'})//TODO flesh out div
     
     );
   }
 
-  //Transaction(customer: String, seller: Int, deliveryMethod: String, deliveryInstructions: String, address: Address, date_ordered: Date)
+  loadTrans(){
+    //TODO load all transactions into list  
+  }
+
+  loadSales(){
+    //TODO fill out summary div
+  }
 }
 
 
