@@ -37,6 +37,14 @@ class InMemoryTroop extends TroopModel {
     }
   }
 
+  def getAllCookies: List[Cookie] = {
+    cookies.map(tup => tup._2).toList
+  }
+  
+  def getAllTroops: List[Troop] = {
+    troops.map(tup => tup._2).toList
+  }
+
   def newTroop(t: Troop): Unit = {
     val tId: TroopId = troops.toList.length-1
     _troops = troops + (tId -> t)
