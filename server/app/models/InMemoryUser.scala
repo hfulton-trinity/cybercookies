@@ -11,9 +11,12 @@ class InMemoryUser extends UserModel {
   type Quantity = Int
   type Price = Double
 
-  private var _users: Map[UserId, User] = Map[UserId, User]()
-  private var _transactions: Map[TransactionId, Transaction] = Map[TransactionId, Transaction]()
-  private var _transactionCookies: List[(TransactionId, Cookie, Quantity, Price)] = List[(TransactionId, Cookie, Quantity, Price)]()
+  private var _users: Map[UserId, User] = Map((0, User("mlewis", "password", "mlewis@trinity.edu", "Mark C. Lewis", 123)))
+  private var _transactions: Map[TransactionId, Transaction] = 
+    Map(0, Transaction("mlewis", 123, "mail", "mail it dummy", 
+    Address("1 Trinity Pl", "San Antonio", "TX", "USA", 78212, 1), 
+    new java.util.Date()))
+  private var _transactionCookies: List[(TransactionId, Cookie, Quantity, Price)] = List((0, Cookie("Thin Mint", "Its a thin mint"), 4, 10.99))
 
   private def users = _users
   private def transactions = _transactions
