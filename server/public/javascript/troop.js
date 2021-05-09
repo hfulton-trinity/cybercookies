@@ -5,9 +5,9 @@ const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
 // const validateTroop=document.getElementById("troopValidateRoute").value;
 // const addTroop=document.getElementById("addTroopRoute").value;
-// const allOrders=document.getElementById("allOrdersRoute").value;
-// const OutStock=document.getElementById("OutStockRoute").value;
-// const AllStock=document.getElementById("AllStockRoute").value;
+ const allOrders=document.getElementById("allOrdersRoute").value;
+ const OutStock=document.getElementById("OutStockRoute").value;
+ const AllStock=document.getElementById("AllStockRoute").value;
 // const allTrans=document.getElementById("TroopTransRoute").value;
 // const sales=document.getElementById("TroopSalesRoute").value;
 // const addStock=document.getElementById("AddStockRoute").value;
@@ -20,13 +20,13 @@ class TroopMainComponent extends React.Component {
   }
 
   handlePageChange(page){
-    console.log(page);
+   // console.log(page);
     this.setState({page});
   }
 
   render(){
     if(this.state.loggedIn){
-      console.log(this.state.page);
+     // console.log(this.state.page);
       switch(this.state.page) {
         case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}),ce(HomeComponent));
         case "Stock": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(StockComponent));
@@ -56,6 +56,7 @@ class HeaderComponent extends React.Component {
   }
 
   render(){
+    //return null;
     return ce('div', 'null', ce('h2', null, 'CyberCookies'),
         ce('nav',{id: "navbar_home"},
           ce('button', {onClick: e => this.handleChange(e,"H")}, 'Home'),
@@ -73,10 +74,10 @@ class LoginTroopComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      username: "",
+      username: 0,
       password: "",
       loginErrorInfo: "",
-      new_username: "",
+      new_username: 0,
       new_password: "",
       createErrorInfo: ""
     };
@@ -85,8 +86,8 @@ class LoginTroopComponent extends React.Component {
     return ce('div', null, 
     ce('h2', null, 'Login'),
     ce('br'),
-    'Username: ', 
-    ce('input', {type: "text", id: "username", value: this.state.username, onChange: e => this.changerHandler(e)}),
+    'Troop Number: ', 
+    ce('input', {type: "number", id: "username", value: this.state.username, onChange: e => this.changerHandler(e)}),
     ce('br'),
     'Password: ',
     ce('input', {type: "password", id: "password", value: this.state.password, onChange: e => this.changerHandler(e)}),
@@ -95,8 +96,8 @@ class LoginTroopComponent extends React.Component {
     ce('span', {id: "login-message"}, this.state.loginErrorInfo),
     ce('h2', null, 'Create User:'),
     ce('br'),
-    'Username: ',
-    ce('input', {type: "text", id: "new_username", value: this.state.new_username, onChange: e => this.changerHandler(e)}),
+    'Troop Number: ',
+    ce('input', {type: "number", id: "new_username", value: this.state.new_username, onChange: e => this.changerHandler(e)}),
     ce('br'),
     'Password: ',
     ce('input', {type: "password", id: "new_password", value: this.state.new_password, onChange: e => this.changerHandler(e)}),
@@ -117,14 +118,14 @@ class LoginTroopComponent extends React.Component {
     this.setState({ [e.target['id']]: e.target.value });
   }
 
-
+//get troop information
   login(e) {
-    const username = this.state.username;
+    const n = this.state.username;
     const password = this.state.password;
     fetch(logInTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
-        body: JSON.stringify({username, password})
+        body: JSON.stringify({n, password})
     }).then(res => res.json()).then(data => {
       console.log(data);
       if(data) {
@@ -134,17 +135,17 @@ class LoginTroopComponent extends React.Component {
       }
     });
   }
-
+//case class Troop(n: Int, address: Address, password: String, next_restock: Date, email: String)
   makeUser() {
-    const nname = this.state.name;
-    const nuser = this.state.new_username;
-    const npass = this.state.new_password;
-    const cemail = this.state.email;
-    const troop = this.state.troop;
+    const n= this.state.new_username
+    const address= "generic address";
+    const password=this.state.password;
+    const next_restock="";//TODO make date
+    const email="generic email";
     fetch(addTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
-        body: JSON.stringify({"name": nname, "user": nuser , "pass": npass, "email": cemail, "troop": troop })
+        body: JSON.stringify({"n": n, "address": address , "password": password, "next_restock": next_restock, "email": email })
     }).then(res => res.json()).then(data => {
       if(data) {
         this.props.doLogin();
@@ -181,37 +182,40 @@ class ContactComponent extends React.Component {
 class HomeComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state={orders: ["test order 1", "test order 2"], out: ["test out 1", "test out 2"]};
+    //this.state={orders: ["test order 1", "test order 2"], out: ["test out 1", "test out 2"]};
+    this.state={
+      orders:[],
+      out:[]
+    }
   }
 
-  compmonentDidMount(){
+  componentDidMount(){
     this.loadOrders();
-    this.loadOut();
+    //this.loadOut();
   }
   render(){
+    console.log(this.state.orders);
+    console.log(this.state.out);
     return ce('div',null,
       ce('h2', null, 'Upcoming Orders'),
       ce('div',{id:"order_details"},
-        ce('ul',null,this.state.orders.map((order,index)=>ce('li',{key:index},order)))
+        //ce('ul',null,this.state.orders.map((order,index)=>ce('li',{key:index},order)))
       ),
     ce('br'),
       ce('h2', null, 'Out of Stock Cookies'),
-      ce('div',{id:"out_stock_details"},ce('ul',null,this.state.out.map((order,index)=>ce('li',{key:index},order))))
+      //ce('div',{id:"out_stock_details"},ce('ul',null,this.state.out.map((order,index)=>ce('li',{key:index},order))))
       
     );
   }
 
   loadOrders(){
-    //TODO load all orders from troop
-    //fetch allOrders
+
+    fetch(allOrders).then(res=>res.json()).then(orders=>{
+      this.setState({orders});});
+    fetch(OutStock).then(res=>res.json()).then(out=>{
+      this.setState({out});
+    });
   }
-
-
-  loadOut(){
-    //TODO load all out of stock cookies
-    //fetch all OutStock
-  }
-
 }
 
 class StockComponent extends React.Component {
@@ -244,6 +248,8 @@ class StockComponent extends React.Component {
   loadStock(){
     //TODO load the current stock of all cookies
     //fetch AllStock
+    fetch(AllStock).then(res=>res.json()).then(stock=>{
+      this.setState({ostock});});
   }
   SendStock(e){
     //TODO

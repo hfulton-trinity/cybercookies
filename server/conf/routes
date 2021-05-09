@@ -13,6 +13,9 @@ POST       /createCustomer               controllers.CustController.newCustomer
 
 #Troop page
 #POST        /validateTroop              controllers.TroopController.validate
+GET          /allOrders                   controllers.TroopController.allOrders
+GET           /outStock                     controllers.TroopController.outStock
+GET           /allStock                   controllers.TroopController.allStock
 
 # Prefix must match `play.assets.urlPrefix`
 GET        /assets/*file                 controllers.Assets.at(file)

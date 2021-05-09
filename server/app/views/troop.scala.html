@@ -4,6 +4,9 @@
    
   <input type="hidden" id="csrfToken" value="@helper.CSRF.getToken.value">
   <input type="hidden" id="troopPageRoute" value="@routes.TroopController.load()">
+  <input type="hidden" id="allOrdersRoute" value=@routes.TroopController.allOrders()>
+  <input type="hidden" id="OutStockRoute" value=@routes.TroopController.outStock()>
+  <input type="hidden" id="AllStockRoute" value=@routes.TroopController.allStock()>
   <div id="troop-root"></div>
   <script src="@routes.Assets.versioned("javascript/troop.js")"></script>
 }
