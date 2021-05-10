@@ -117,9 +117,7 @@ def withSessionUsername(f: String => Result)(implicit request: Request[AnyConten
 //   }
 // }
 
-
-
-//   def createUser = Action { implicit request =>
+//   def createTroop = Action { implicit request =>
 //     withJsonBody[UserData] { ud =>
 //       if (TModel.createUser(ud.username, ud.password)) {
 //         Ok(Json.toJson(true))

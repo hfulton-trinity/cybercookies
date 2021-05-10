@@ -14,7 +14,7 @@ const csrfToken = document.getElementById("csrfToken").value;
 class TroopMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: true};
+    this.state = {page: "H", loggedIn: false};
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
@@ -103,12 +103,12 @@ class LoginTroopComponent extends React.Component {
     ce('br'),
     ce('button', {onClick: e => this.makeUser(e)}, 'Create User'),
     ce('span', {id: "create-message"}, this.state.createErrorInfo),
-    ce('br'), ce('button', {onClick: e => transferTroop(e)}, 'Click here for the regular login page')
+    ce('br'),
+    ce('span',null,ce('a',{href:"/"},"Home Page")),
+    ce('br'),
+    ce('span',null,ce('a',{href:"/customer"},"Customer Login Page"))
     );
   }
-   transferTroop(e){//TODO fix
-     ce('Redirect',{to: custPage});
-   }
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
@@ -244,8 +244,6 @@ class StockComponent extends React.Component {
     );
   }
   loadStock(){
-    //TODO load the current stock of all cookies
-    //fetch AllStock
     fetch(AllStock).then(res=>res.json()).then(stock=>{
       this.setState({stock});});
   }
@@ -274,7 +272,8 @@ class BookKeepingComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      //TODO figure out what will be tracked
+      transactions:[],
+      sales:[]
       //transactions:["Test transaction 1", "Test Transaction 2"],
       //sales:["Test Sale1", "Test Sale2"]
     };
@@ -288,9 +287,9 @@ class BookKeepingComponent extends React.Component {
       ce('h2',null, 'Transaction List'),
       ce('div',{id:'Transac_List'},
       ce('ul', null,this.state.transactions.map((message, index) => ce('li', { key: index }, message))),
-      ce('br')),//TODO flesh out div
+      ce('br')),
       ce('h2',null,'Monthly Sales'),
-      ce('div',{id:'Month_Sales'},ce('ul', null,this.state.sales.map((message, index) => ce('li', { key: index }, message))))//TODO flesh out div
+      ce('div',{id:'Month_Sales'},ce('ul', null,this.state.sales.map((message, index) => ce('li', { key: index }, message))))
     
     );
   }

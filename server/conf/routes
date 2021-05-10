@@ -13,6 +13,7 @@ POST       /createCustomer               controllers.CustController.newCustomer
 
 #Troop page
 #POST        /validateTroop              controllers.TroopController.validate
+#POST        /createTroop                controllers.TroopController.createTroop
 GET          /allOrders                   controllers.TroopController.allOrders
 GET           /outStock                     controllers.TroopController.outStock
 GET           /allStock                   controllers.TroopController.allStock
