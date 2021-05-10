@@ -197,11 +197,11 @@ class HomeComponent extends React.Component {
     return ce('div',null,
       ce('h2', null, 'Upcoming Orders'),
       ce('div',{id:"order_details"},
-        //ce('ul',null,this.state.orders.map((order,index)=>ce('li',{key:index},order)))
+        ce('ul',null,this.state.orders.map((order,index)=>ce('li',{key:index},order)))
       ),
     ce('br'),
       ce('h2', null, 'Out of Stock Cookies'),
-      //ce('div',{id:"out_stock_details"},ce('ul',null,this.state.out.map((order,index)=>ce('li',{key:index},order))))
+      ce('div',{id:"out_stock_details"},ce('ul',null,this.state.out.map((order,index)=>ce('li',{key:index},order))))
       
     );
   }

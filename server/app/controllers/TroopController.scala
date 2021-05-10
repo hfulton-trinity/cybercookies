@@ -78,39 +78,24 @@ import models.UserModel
 import models.TroopModel
 import models._
 import play.api.libs.json._
-<<<<<<< HEAD
 import models.Tables._
-=======
 import shared.SharedMessages.Stock
 import shared.SharedMessages.Cookie
 import shared.SharedMessages
->>>>>>> c47c0c85a99019c254c5a560db9af18c1444fac4
 
 @Singleton
 class TroopController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
   def load = Action{ implicit request =>
     Ok(views.html.troop())
   }
-<<<<<<< HEAD
-  private val Model=TroopModel()
-  // def validateTroop=Action{
-  //    withJsonBody[UserData]{ud=>
-  //     if(Model.validate)
-    
-    
-  //   }
 
-  // }
-
-
-
-
-=======
   private val TModel=TroopModel()
+//private val TModel= new DatabaseTroop
   private val UModel=UserModel()
   implicit val cookieWrites=Json.writes[Cookie]
+  implicit val cookieReads=Json.reads[Cookie]
   implicit val stockWrites=Json.writes[Stock]
->>>>>>> c47c0c85a99019c254c5a560db9af18c1444fac4
+  implicit val stockReads=Json.reads[Stock]
   implicit val userDataReads = Json.reads[UserData]
   implicit val addressWrites=Json.writes[SharedMessages.Address]
   implicit val transactionWrites=Json.writes[SharedMessages.Transaction]
@@ -126,27 +111,27 @@ def withSessionUsername(f: String => Result)(implicit request: Request[AnyConten
     request.session.get("username").map(f).getOrElse(Ok(Json.toJson(Seq.empty[String])))
   }
 
-// def validate=Action{ implicit request=>
-//   withJsonBody[UserData]{ ud=>
-//     if(TModel.getTroopInformation(ud.username.toInt,ud.password)){
-//      Ok(Json.toJson(true))
-//           .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-//       } else {
-//         Ok(Json.toJson(false))
-//       }
-//   }
-// }
+def validate=Action{ implicit request=>
+  withJsonBody[UserData]{ ud=>
+    if(TModel.getTroopInformation(ud.username.toInt,ud.password)){//defined correctly in database model
+     Ok(Json.toJson(true))
+          .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+      } else {
+        Ok(Json.toJson(false))
+      }
+  }
+}
 
-//   def createTroop = Action { implicit request =>
-//     withJsonBody[UserData] { ud =>
-//       if (TModel.createUser(ud.username, ud.password)) {
-//         Ok(Json.toJson(true))
-//           .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-//       } else {
-//         Ok(Json.toJson(false))
-//       }
-//     }
-//   }
+  def createTroop = Action { implicit request =>
+    withJsonBody[UserData] { ud =>
+      if (TModel.newTroop(ud.username.toInt, ud.password)) {//need to create troop 
+        Ok(Json.toJson(true))
+          .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+      } else {
+        Ok(Json.toJson(false))
+      }
+    }
+  }
 
 def allOrders=Action{ implicit request=>
   withSessionUsername{ username=>
@@ -173,6 +158,14 @@ def totalSales=Action{implicit request=>
   }
   }
 
+  def addStock= Action{implicit request=>
+  withSessionUsername{username=>
+    withJsonBody[Stock]{St=>
+      TModel.addCookies(username.toInt,St.num,St.cost.toInt)
+      Ok(Json.toJson(true))
+    }
+
+  }}
 
 }
 
