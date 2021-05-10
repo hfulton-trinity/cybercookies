@@ -3,13 +3,13 @@ package models
 import shared.SharedMessages.Address
 import shared.SharedMessages.Cookie
 import shared.SharedMessages.Troop
-import java.util.Date
+import java.sql.Date
 
 class InMemoryTroop extends TroopModel {
   type CookieId = Int
   type TroopId = Int
 
-  private var _troops: Map[TroopId, Troop] = List((0, Troop(123, Address("1 Trinity Pl", "San Antonio", "TX", "USA", 78212, -1), "test", new Date(2020, 5, 2), "trinity@trinity.edu"))).toMap
+  private var _troops: Map[TroopId, Troop] = List((0, Troop(123, Address("1 Trinity Pl", "San Antonio", "TX", "USA", 78212, None), "test", new Date(2020, 5, 2), "trinity@trinity.edu"))).toMap
   private var _troopCookies: List[(TroopId, CookieId, Quantity, Price)] = List((0, 0, 5, 10.99))
   private var _cookies: Map[CookieId, Cookie] = List((0, Cookie("Thin Mint", "Its a thin mint."))).toMap
 

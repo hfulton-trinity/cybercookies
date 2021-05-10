@@ -7,13 +7,14 @@ import models.UserModel
 import models.TroopModel
 import models._
 import play.api.libs.json._
+import models.Tables._
 
 @Singleton
 class TroopController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
   def load = Action{ implicit request =>
     Ok(views.html.troop())
   }
-  private val Model=TroopModel.apply()
+  private val Model=TroopModel()
   // def validateTroop=Action{
   //    withJsonBody[UserData]{ud=>
   //     if(Model.validate)

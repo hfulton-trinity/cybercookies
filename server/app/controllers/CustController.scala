@@ -8,6 +8,7 @@ import models.TroopModel
 import models._
 import play.api.libs.json._
 import shared.SharedMessages._
+import models.Tables._
 
 @Singleton
 class CustController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
