@@ -105,20 +105,23 @@ def withJsonBody[A](f: A => Result)(implicit request: Request[AnyContent], reads
 def withSessionUsername(f: String => Result)(implicit request: Request[AnyContent]) = {
     request.session.get("username").map(f).getOrElse(Ok(Json.toJson(Seq.empty[String])))
   }
-// def validate = Action { implicit request =>
-//     withJsonBody[UserData] { ud =>
-//       if (InMemoryModel.validateUser(ud.username, ud.password)) {
-//         Ok(Json.toJson(true))
+
+// def validate=Action{ implicit request=>
+//   withJsonBody[UserData]{ ud=>
+//     if(TModel.getTroopInformation(ud.username.toInt,ud.password)){
+//      Ok(Json.toJson(true))
 //           .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
 //       } else {
 //         Ok(Json.toJson(false))
 //       }
-//     }
 //   }
+// }
+
+
 
 //   def createUser = Action { implicit request =>
 //     withJsonBody[UserData] { ud =>
-//       if (InMemoryModel.createUser(ud.username, ud.password)) {
+//       if (TModel.createUser(ud.username, ud.password)) {
 //         Ok(Json.toJson(true))
 //           .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
 //       } else {
@@ -145,29 +148,13 @@ def allStock=Action{implicit request=>
 }
 }
 
-/*
-def newTroop = Action {
-//NEEDS WORK
-  withJsonBody[TroopData] {ud =>
-    if(TroopModel.logIn(ud.no, ud.password)){
-      Ok(Json.toJson(true))
-        .withSession("no" -> ud.no, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-    } else {
-      Ok(Json.toJson(false))
-    }
-  }
-}
+def totalSales=Action{implicit request=>
+  withSessionUsername{ username=>
+    Ok(Json.toJson(UModel.totalSold))
 
-def validateTroop = Action {
-  withJsonBody[TroopData] {ud =>
-    if(TroopModel.logIn(ud.no, ud.password)){
-      Ok(Json.toJson(true))
-        .withSession("no" -> ud.no, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-    } else {
-      Ok(Json.toJson(false))
-    }
   }
-}
-*/
+  }
+
+
 }
 

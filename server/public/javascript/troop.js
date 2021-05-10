@@ -8,8 +8,7 @@ const csrfToken = document.getElementById("csrfToken").value;
  const allOrders=document.getElementById("allOrdersRoute").value;
  const OutStock=document.getElementById("OutStockRoute").value;
  const AllStock=document.getElementById("AllStockRoute").value;
-// const allTrans=document.getElementById("TroopTransRoute").value;
-// const sales=document.getElementById("TroopSalesRoute").value;
+ const salesRoute=document.getElementById("TroopSalesRoute").value;
 // const addStock=document.getElementById("AddStockRoute").value;
 
 class TroopMainComponent extends React.Component {
@@ -191,7 +190,6 @@ class HomeComponent extends React.Component {
 
   componentDidMount(){
     this.loadOrders();
-    //this.loadOut();
   }
   render(){
     console.log(this.state.orders);
@@ -249,10 +247,22 @@ class StockComponent extends React.Component {
     //TODO load the current stock of all cookies
     //fetch AllStock
     fetch(AllStock).then(res=>res.json()).then(stock=>{
-      this.setState({ostock});});
+      this.setState({stock});});
   }
   SendStock(e){
-    //TODO
+    
+    // fetch(addStock, { 
+    //   method: 'POST',
+    //   headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken },
+    //   body: JSON.stringify({username,password,"0.0"})
+    // }).then(res => res.json()).then(data => {
+    //   if(data) {
+    //     this.loadTasks();
+    //     this.setState({ errorMessage: "", newMessage: "" ,newUser:""});
+    //   } else {
+    //     this.setState({ errorMessage: "Failed to add." });
+    //   }
+    // });
   }
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
@@ -265,8 +275,8 @@ class BookKeepingComponent extends React.Component {
     super(props);
     this.state = {
       //TODO figure out what will be tracked
-      transactions:["Test transaction 1", "Test Transaction 2"],
-      sales:["Test Sale1", "Test Sale2"]
+      //transactions:["Test transaction 1", "Test Transaction 2"],
+      //sales:["Test Sale1", "Test Sale2"]
     };
   }
   compmonentDidMount(){
@@ -286,13 +296,13 @@ class BookKeepingComponent extends React.Component {
   }
 
   loadTrans(){
-    //TODO load all transactions into list 
-    //fetch allTrans
+    fetch(allOrders).then(res=>res.json()).then(transactions=>{
+      this.setState({transactions});});
   }
 
   loadSales(){
-    //TODO fill out summary div
-    //fetch sales
+    fetch(salesRoute).then(res=>res.json()).then(sales=>{
+      this.setState({sales});});
   }
 }
 
