@@ -6,6 +6,7 @@ const logInCust = document.getElementById("custLoginRoute").value;
 const addCust = document.getElementById("newCustRoute").value;
 const sendTransact = document.getElementById("transactionRoute").value;
 const getTroopEmail = document.getElementById("troopEmailRoute").value;
+const getAvailCookies = document.getElementById("getAvailCookiesRoute").value;
 
 class CustomerMainComponent extends React.Component {
   constructor(props){
@@ -199,12 +200,10 @@ class HomeComponent extends React.Component {
     );
   }
 
-//IDK HOW TO GET THIS
   loadTroopEmail(){
     fetch(getTroopEmail).then(res=>res.json()).then(email => this.setState({troop_email: "mailto: " +email}));
   }
 
-//Need Array [Troop, date, time]
   loadNextDelivery(){
     fetch(getNextDelivery).then(res=>res.json()).then(delivery => this.setState({next_delivery: delivery}));
   }
@@ -227,6 +226,7 @@ class OrderComponent extends React.Component {
   render(){
     return ce('div', null,
       'Search for cookies: ', ce('input',{type: "text", value: this.state.search, onChange: e => this.typingHandler(e)}),
+      ce('button',{onClick: e => this.search(e)},'Search')
       //Show cookies??? Image, name, descrip, price, avail
       //quantity input, add to cart button
       ce('div', {id: "avail_cookies"},
@@ -237,7 +237,7 @@ class OrderComponent extends React.Component {
               ce('p', null, cookie_details)),
               ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),
               ce('button',{onClick: e => this.cartUpdate(e)},'Add to Cart')
-            
+            )
           })
         )
       )
@@ -245,16 +245,19 @@ class OrderComponent extends React.Component {
   }
 
   loadAvailCookies(){
+    fetch(getAvailCookies).then(res=>res.json()).then(cookies => this.setState({cookies}));
+  }
 
+  search(e){
+    //filter
   }
 
   cartUpdate(e){
-
+    //update cart with additions
   }
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
-    console.log([e.target['id']]);
   }
 }
 
