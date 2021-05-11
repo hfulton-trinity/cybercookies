@@ -11,13 +11,15 @@ import models.Tables._
 
 @Singleton
 class Application @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+  private val model = TroopModel()
 
   def load = Action{ implicit request =>
     Ok(views.html.home())
   }
 
+//need cookie number stored to correspond to img array
   def getCookies = Action { implicit request =>
-    Ok(views.html.home()) //send cookie # for img and string (Name: details)
+    Ok(Json.toJson(model.getAllCookies.map(x => ""+x.name+": "+x.description+","+x.num)))
   }
 
 }

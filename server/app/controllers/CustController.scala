@@ -8,12 +8,15 @@ import models.TroopModel
 import models._
 import play.api.libs.json._
 import shared.SharedMessages._
+import shared.SharedMessages.Stock
+import shared.SharedMessages.Cookie
 import models.Tables._
 
 @Singleton
 class CustController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  val model = UserModel()
+  private val model = UserModel()
+  private val troop_model = TroopModel()
 
   def load = Action{ implicit request =>
     Ok(views.html.cust())
@@ -23,14 +26,20 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   implicit val userDataReads = Json.reads[UserData]
   implicit val newUserDataReads = Json.reads[NewUserData]
+  implicit val cookieWrites=Json.writes[Cookie]
+  implicit val cookieReads=Json.reads[Cookie]
+  implicit val stockWrites=Json.writes[Stock]
+  implicit val stockReads=Json.reads[Stock]
+  implicit val addressWrites=Json.writes[SharedMessages.Address]
+  implicit val transactionWrites=Json.writes[SharedMessages.Transaction]
 
   def withJsonBody[A](f: A => Result)(implicit request: Request[AnyContent], reads: Reads[A]) = {
     request.body.asJson.map { body =>
       Json.fromJson[A](body) match {
         case JsSuccess(a,path) => f(a)
-        case e @ JsError(_) => Redirect(routes.Application.load())
+        case e @ JsError(_) => Redirect(routes.CustController.load())
       }
-    }.getOrElse(Redirect(routes.Application.load()))
+    }.getOrElse(Redirect(routes.CustController.load()))
 
   }
 
@@ -50,9 +59,6 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def newCustomer = Action { implicit request =>
-  //NEEDS WORK- how to validate not a current user
-  Ok(Json.toJson(false))
-  /*
     withJsonBody[NewUserData] {ud =>
       if(model.newUser(User(ud.user, ud.pass, ud.email, ud.name, ud.troop))){
         Ok(Json.toJson(true))
@@ -63,10 +69,33 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
     }*/
   }
 
-  /*Methods:
-      Get troop email --> sends email as string
-      Get next delivery
-      Logout
-  */
+  def getTroopEmail = Action { implicit request =>
+    withSessionUsername{ username =>
+      val user = model.getUserInfo(username)
+      val troop_email = troop_model.getTroopInformation(user.troop_to_buy_from).email //need some way to do this in model
+      Ok(Json.toJson(troop_email))
+    }
+  }
+
+  //not sure best way to do this
+  def getNextDelivery = Action { implicit request =>
+    withSessionUsername{ username =>
+      //val transact = model.myTransactions(username).sortBy(x => x.date_ordered).head
+      //val deliv_date = transact.date_ordered + 2 weeks??
+      val dispTransact = "Troop: " //+ transact.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + transact.address
+      Ok(Json.toJson(dispTransact))
+    }
+  }
+
+  def getAvailCookies = Action { implicit request =>
+    withSessionUsername{ username =>
+      Ok(Json.toJson(troop_model.getAvailableCookies(model.getUserInfo(username).troop_to_buy_from).map((x,price,q) => ""+x.name+": "+x.description+" Price: "+ price+ " Quantity Available: "+q+" ,"+x.num))
+    }
+
+  }
+
+  def logout = Action { implicit request =>
+    Ok(Json.toJson(true)).withSession(request.session - "username")
+  }
 
 }

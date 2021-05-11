@@ -6,6 +6,7 @@ const logInCust = document.getElementById("custLoginRoute").value;
 const addCust = document.getElementById("newCustRoute").value;
 const sendTransact = document.getElementById("transactionRoute").value;
 const getTroopEmail = document.getElementById("troopEmailRoute").value;
+const nextDelivery = document.getElementById("getNextDeliveryRoute").value;
 const getAvailCookies = document.getElementById("getAvailCookiesRoute").value;
 
 class CustomerMainComponent extends React.Component {
@@ -233,8 +234,8 @@ class OrderComponent extends React.Component {
         ce('ul', null,
           this.state.cookies.map((cookie_details,index) => {
             ce('li', {key: index},
-              ce('img',{src: cookie_imgs[index], alt: "", width: 200},null),
-              ce('p', null, cookie_details)),
+              ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),
+              ce('p', null, cookie_details.split(',')[0])),
               ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),
               ce('button',{onClick: e => this.cartUpdate(e)},'Add to Cart')
             )
@@ -250,6 +251,7 @@ class OrderComponent extends React.Component {
 
   search(e){
     //filter
+    this.setState({cookies: cookies.filter(x => x.contains(this.state.search))})
   }
 
   cartUpdate(e){

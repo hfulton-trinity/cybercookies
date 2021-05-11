@@ -184,8 +184,8 @@ class CookieComponent extends React.Component {
         ce('ul', null,
           this.state.cookies.map((cookie_details,index) => {
             ce('li', {key: index},
-              ce('img',{src: cookie_imgs[index], alt: "", width: 200},null),
-              ce('p',null,cookie_details)
+              ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),
+              ce('p',null,cookie_details.split(',')[0])
             )
           })
         )
