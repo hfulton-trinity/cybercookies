@@ -11,8 +11,8 @@ import shared.SharedMessages
 import shared.SharedMessages.Stock
 import shared.SharedMessages.Cookie
 import models.Tables._
-import java.sql.date
-import java.util.calendar
+import java.sql.Date
+import java.util.Calendar
 
 @Singleton
 class CustController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
@@ -83,7 +83,7 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
   def getNextDelivery = Action { implicit request =>
     withSessionUsername{ username =>
       val transact = model.myTransactions(username).sortBy(x => x.date_ordered).head
-      val deliv_date = new Date(transact.date_ordered.getTimeinMillis() + 1210000000)
+      val deliv_date = new Date(transact.date_ordered.getTime() + 1210000000)
       val dispTransact = "Troop: " + transact.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + transact.address
       Ok(Json.toJson(dispTransact))
     }
@@ -103,6 +103,8 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
       }))
     }
   }
+
+  def sendTransaction = ??? //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
 
   def logout = Action { implicit request =>
     Ok(Json.toJson(true)).withSession(request.session - "username")
