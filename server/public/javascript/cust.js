@@ -276,7 +276,7 @@ class CartComponent extends React.Component {
       apt: 0,
       card_no: "",
       crv: "",
-      exp: ""/*date??*/,
+      exp: "",
       orderStatus: "",
       orders: []
     };
@@ -287,7 +287,7 @@ class CartComponent extends React.Component {
       ce('div', {id: "order"},
         ce('h2', null, 'Current Order'),
         ce('ul', null,
-          this.state.orders.map((...) => ce('li', {key: ...}, ...))
+          //this.state.orders.map((...) => ce('li', {key: ...}, ...))
         )
       ), ce('aside',{id: "checkout"},
         'Shipping Address:', ce('br'),
@@ -303,8 +303,7 @@ class CartComponent extends React.Component {
         'Card No.: ', ce('input',{type: "text", value: this.state.card_no, onChange: e => this.typingHandler(e)}),
         ce('br'),
         'CSV: ', ce('input',{type: "text", value: this.state.crv, onChange: e => this.typingHandler(e)}),
-        //Date???
-        'Exp. Date: ', ce('input',{type: "date", value: this.state.exp, onChange: e => this.typingHandler(e)}),
+        'Exp. Date (MM/YY): ', ce('input',{type: "text", value: this.state.exp, onChange: e => this.typingHandler(e)}),
         ce('br'), ce('button', {onClick: e => e.sendTransaction()}, 'Confirm and order'),
         ce('br'),ce('span', {id: "order-message"}, this.state.orderStatus),
       )

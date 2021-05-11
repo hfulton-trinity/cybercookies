@@ -11,12 +11,15 @@ import shared.SharedMessages
 import shared.SharedMessages.Stock
 import shared.SharedMessages.Cookie
 import models.Tables._
+import java.sql.date
+import java.util.calendar
 
 @Singleton
 class CustController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
   private val model = UserModel()
   private val troop_model = TroopModel()
+  private val date: Calendar = Calendar.getInstance()
 
   def load = Action{ implicit request =>
     Ok(views.html.cust())
@@ -72,25 +75,31 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
   def getTroopEmail = Action { implicit request =>
     withSessionUsername{ username =>
       val user = model.getUserInfo(username)
-      val troop_email = troop_model.getTroopInformationNoPassword(user.troop_to_buy_from).email //need some way to do this in model
+      val troop_email = troop_model.getTroopInformationNoPassword(user.troop_to_buy_from).email
       Ok(Json.toJson(troop_email))
     }
   }
 
-  //not sure best way to do this
   def getNextDelivery = Action { implicit request =>
     withSessionUsername{ username =>
-      //val transact = model.myTransactions(username).sortBy(x => x.date_ordered).head
-      //val deliv_date = transact.date_ordered + 2 weeks??
-      val dispTransact = "Troop: " //+ transact.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + transact.address
+      val transact = model.myTransactions(username).sortBy(x => x.date_ordered).head
+      val deliv_date = new Date(transact.date_ordered.getTimeinMillis() + 1210000000)
+      val dispTransact = "Troop: " + transact.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + transact.address
       Ok(Json.toJson(dispTransact))
     }
+  }
+
+  def getEstimatedDelivery = Action { implicit request =>
+    Ok(Json.toJson(""+Calendar.get(Calendar.MONTH)+"/"+Calendar.get(Calendar.DAY_OF_MONTH)+"/"+Calendar.get(Calendar.YEAR)))
+    //+2wks??
+
+    //need estimated delivery date as string
   }
 
   def getAvailCookies = Action { implicit request =>
     withSessionUsername{ username =>
       Ok(Json.toJson(troop_model.getAvailableCookies(model.getUserInfo(username).troop_to_buy_from).map {
-        case (x,price,q) => ""+x.name+": "+x.description+" Price: "+ price+ " Quantity Available: "+q+" ,"/*+x.num*/
+        case (x,price,q) => ""+x.name+": "+x.description+" Price: "+ price+ " Quantity Available: "+q+","+x.img_index
       }))
     }
   }
