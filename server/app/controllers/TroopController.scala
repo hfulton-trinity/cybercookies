@@ -28,7 +28,8 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
 private val model= new DatabaseTroop(db)  
 private val UModel= new DatabaseUser(db)
     def load=Action{implicit request=>
-        Ok(views.html.troop())}
+        Ok(views.html.troop())
+      }
     
   implicit val userDataReads = Json.reads[UserData]
     implicit val addressDataReads = Json.reads[SharedMessages.Address]
@@ -41,6 +42,8 @@ private val UModel= new DatabaseUser(db)
       implicit val transactionDataWrites = Json.writes[SharedMessages.Transaction]
        implicit val stockDataReads = Json.reads[SharedMessages.Stock]
       implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
+
+
   // implicit val messageReads=Json.reads[MessageOut]
 // implicit val messageWrites=Json.writes[MessageData]
 // implicit val taskItemWrites = Json.writes[TaskItem]
@@ -53,6 +56,7 @@ private val UModel= new DatabaseUser(db)
       }
     }.getOrElse(Future.successful(Redirect(routes.TroopController.load())))
   }
+
      def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     request.session.get("username").map(f).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
@@ -60,46 +64,21 @@ private val UModel= new DatabaseUser(db)
     request.session.get("userid").map(userid => f(userid.toInt)).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
 
-// def validate=Action.async{ implicit request=>
-//   withJsonBody[UserData]{ ud=>
-//     model.getTroopInformation(ud.username.toInt,ud.password)){
-//           .withSession("username" -> ud.username, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-//       } else {
-//         Ok(Json.toJson(false))
-//       }
-//   }
-// }
+def validate = TODO
+
+def createTroop = TODO
+
+def allOrders= TODO
 
 
-def allOrders=Action.async { implicit request=>
-  withSessionUsername{ username=> 
+def outStock= TODO
 
-    println(username.toInt)
-    Ok(Json.toJson(UModel.getOrders(username.toInt))) // inside getOrders is  but I do not think that is appropiate
-    //Ok(views.html.troop())
-  }
+  def allStock = TODO
+
+  def totalSales= TODO
+
+  def addStock= TODO
 }
-
-
-// def outStock=Action.async {implicit request=>
-//   Ok(Json.toJson(UModel.totalSold))}
-// def totalSales=Action{implicit request=>
-//   withSessionUsername{ username=>
-//     Ok(Json.toJson(UModel.totalSold))
-
-//   }
-//   }
-
-//   def addStock= Action.async {implicit request=>
-//   withSessionUsername{username=>
-//     withJsonBody[Stock]{St=>
-//       TModel.addCookies(username.toInt,St.num,St.cost.toInt)
-//       Ok(Json.toJson(true))
-//     }
-
-
-}
-
 
 
 
