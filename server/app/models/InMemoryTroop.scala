@@ -11,7 +11,7 @@ class InMemoryTroop extends TroopModel {
 
   private var _troops: Map[TroopId, Troop] = List((0, Troop(123, Address("1 Trinity Pl", "San Antonio", "TX", "USA", 78212, None), "test", new Date(2020, 5, 2), "trinity@trinity.edu"))).toMap
   private var _troopCookies: List[(TroopId, CookieId, Quantity, Price)] = List((0, 0, 5, 10.99))
-  private var _cookies: Map[CookieId, Cookie] = List((0, Cookie("Thin Mint", "Its a thin mint."))).toMap
+  private var _cookies: Map[CookieId, Cookie] = List((0, Cookie("Thin Mint", "Its a thin mint.", 0))).toMap
 
   private def troops = _troops
   private def troopCookies = _troopCookies

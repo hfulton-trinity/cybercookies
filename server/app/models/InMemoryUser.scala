@@ -20,7 +20,7 @@ class InMemoryUser extends UserModel {
     Map((0, Transaction(0, 123, "mail", "mail it dummy", 
     Address("1 Trinity Pl", "San Antonio", "TX", "USA", 78212, None), 
     new Date(date.getTimeInMillis()))))
-  private var _transactionCookies: List[(TransactionId, Cookie, Quantity, Price)] = List((0, Cookie("Thin Mint", "Its a thin mint"), 4, 10.99))
+  private var _transactionCookies: List[(TransactionId, Cookie, Quantity, Price)] = List((0, Cookie("Thin Mint", "Its a thin mint", 0), 4, 10.99))
 
   private def users = _users
   private def transactions = _transactions
