@@ -59,18 +59,19 @@ trait Tables {
   /** Entity class storing rows of table Cookie
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param name Database column name SqlType(varchar), Length(40,true)
-   *  @param description Database column description SqlType(varchar), Length(1000,true) */
-  case class CookieRow(id: Int, name: String, description: String)
+   *  @param description Database column description SqlType(varchar), Length(1000,true)
+   *  @param imageindex Database column imageindex SqlType(int4) */
+  case class CookieRow(id: Int, name: String, description: String, imageindex: Int)
   /** GetResult implicit for fetching CookieRow objects using plain SQL queries */
   implicit def GetResultCookieRow(implicit e0: GR[Int], e1: GR[String]): GR[CookieRow] = GR{
     prs => import prs._
-    CookieRow.tupled((<<[Int], <<[String], <<[String]))
+    CookieRow.tupled((<<[Int], <<[String], <<[String], <<[Int]))
   }
   /** Table description of table cookie. Objects of this class serve as prototypes for rows in queries. */
   class Cookie(_tableTag: Tag) extends profile.api.Table[CookieRow](_tableTag, "cookie") {
-    def * = (id, name, description) <> (CookieRow.tupled, CookieRow.unapply)
+    def * = (id, name, description, imageindex) <> (CookieRow.tupled, CookieRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = ((Rep.Some(id), Rep.Some(name), Rep.Some(description))).shaped.<>({r=>import r._; _1.map(_=> CookieRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = ((Rep.Some(id), Rep.Some(name), Rep.Some(description), Rep.Some(imageindex))).shaped.<>({r=>import r._; _1.map(_=> CookieRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -78,6 +79,8 @@ trait Tables {
     val name: Rep[String] = column[String]("name", O.Length(40,varying=true))
     /** Database column description SqlType(varchar), Length(1000,true) */
     val description: Rep[String] = column[String]("description", O.Length(1000,varying=true))
+    /** Database column imageindex SqlType(int4) */
+    val imageindex: Rep[Int] = column[Int]("imageindex")
   }
   /** Collection-like TableQuery object for table Cookie */
   lazy val Cookie = new TableQuery(tag => new Cookie(tag))

@@ -96,6 +96,6 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
       }).result
     )
 
-    transCookies.map(seq => seq.map(tup => (SharedMessages.Cookie(tup._1.name, tup._1.description), tup._2, tup._3)))
+    transCookies.map(seq => seq.map(tup => (SharedMessages.Cookie(tup._1.name, tup._1.description, tup._1.imageindex), tup._2, tup._3)))
   } 
 }

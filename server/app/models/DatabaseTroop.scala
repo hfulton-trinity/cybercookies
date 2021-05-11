@@ -23,7 +23,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       }).result)
 
     troopRowFut.flatMap(seq => db.run(Troop += TroopRow(-1, t.n, Some(seq.head), t.password, t.next_restock, t.email))).map(_ == 1)
-    }
+  }
 
   def getAvailableCookies(troopN: Int): Future[Seq[(SharedMessages.Cookie, Price, Quantity)]] = {
     val cookiesFuture = db.run(
@@ -36,7 +36,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       }).result
     )
 
-    cookiesFuture.map(_.map(tup => (SharedMessages.Cookie(tup._1.name, tup._1.description), tup._2.price, tup._2.quantity)))
+    cookiesFuture.map(_.map(tup => (SharedMessages.Cookie(tup._1.name, tup._1.description, tup._1.imageindex), tup._2.price, tup._2.quantity)))
   }
 
   def logIn(troopN: Int, password: String): Future[Boolean] = {
@@ -90,7 +90,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
 
   def addCookies(troopN: Int, cookieId: Int, q: Quantity): Future[Int] = {
     val cookies = db.run(Cookie.filter(c => c.id === cookieId).result)
-    cookies.flatMap(c => db.run(Cookie += CookieRow(-1, c.head.name, c.head.description)))
+    cookies.flatMap(c => db.run(Cookie += CookieRow(-1, c.head.name, c.head.description, c.head.imageindex)))
 
     val tIDtcID = db.run(
       (for{
@@ -105,7 +105,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
   }
 
   def newCookie(troopN: Int, c: SharedMessages.Cookie, q: Quantity, p: Price): Future[Boolean] = {
-    db.run(Cookie += CookieRow(-1, c.name, c.description))
+    db.run(Cookie += CookieRow(-1, c.name, c.description, c.img_index))
     val tIDcID = db.run(
       (for{
         troop <- Troop if troop.number === troopN
@@ -127,7 +127,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       }).result
     )
 
-    c.map(c => SharedMessages.Cookie(c.head.name, c.head.description))
+    c.map(c => SharedMessages.Cookie(c.head.name, c.head.description, c.head.imageindex))
   }
 
   def getAllTroops: Future[Seq[SharedMessages.Troop]] = {
@@ -149,6 +149,6 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
 
   def getAllCookies: Future[Seq[SharedMessages.Cookie]] = {
     val cookies = db.run(Cookie.map(cookieRow => cookieRow).result)
-    cookies.map(cookieRow => cookieRow.map(cR => SharedMessages.Cookie(cR.name, cR.description)))
+    cookies.map(cookieRow => cookieRow.map(cR => SharedMessages.Cookie(cR.name, cR.description, cR.imageindex)))
   }
 }
