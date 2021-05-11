@@ -72,6 +72,17 @@ class InMemoryTroop extends TroopModel {
       validTroops(0)
     }
   }
+
+    def getTroopInformationFromTroop(troopN: Int): Troop = {
+    val validTroops = troops.filter(tup => (tup._2.n == troopN) ).map(tup => tup._2).toList
+    
+    if(validTroops.length < 1) {
+      null
+    } else {
+      validTroops(0)
+    }
+  }
+
   def addCookies(troopN: Int, cookieId: Int, q: Quantity): Unit = {
     val troopId = getTroopIdFromTroopN(troopN)
     val currentTC = troopCookies.filter(tc => {

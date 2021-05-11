@@ -19,7 +19,8 @@ class Application @Inject()(cc: ControllerComponents) extends AbstractController
 
 //need cookie number stored to correspond to img array
   def getCookies = Action { implicit request =>
-    Ok(Json.toJson(model.getAllCookies.map(x => ""+x.name+": "+x.description+","+x.num)))
+    Ok(Json.toJson(model.getAllCookies.map(x => ""+x.name+": "+x.description+","//+x.num
+    )))
   }
 
 }

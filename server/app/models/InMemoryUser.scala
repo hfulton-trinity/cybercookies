@@ -43,9 +43,10 @@ class InMemoryUser extends UserModel {
     transactionCookies.map(tup => (tup._2, tup._3, tup._4)).toList
   }
 
-  def newUser(u: User): Unit = {
+  def newUser(u: User): Boolean = {
     val newUserId: UserId = users.toList.length - 1
     _users = users + (newUserId -> u)
+    true
   }
 
   def logIn(u: Username, p: Password): Boolean = {

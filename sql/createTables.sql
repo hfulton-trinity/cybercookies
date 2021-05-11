@@ -37,14 +37,6 @@ CREATE TABLE troop_cookies (
   troop_id int4 REFERENCES troop(id) ON DELETE CASCADE, 
   cookie_id int4 REFERENCES cookie(id) ON DELETE CASCADE, 
   quantity integer NOT NULL, 
-  price double NOT NULL
-);
-
-CREATE TABLE troop_cookies (
-  id SERIAL PRIMARY KEY, 
-  troop_id int4 REFERENCES troop(id) ON DELETE CASCADE, 
-  cookie_id int4 REFERENCES cookie(id) ON DELETE CASCADE, 
-  quantity integer NOT NULL, 
   price double precision NOT NULL
 );
 
@@ -55,7 +47,7 @@ CREATE TABLE transaction (
   delivery_method varchar(40) NOT NULL, 
   delivery_instructions varchar(100), 
   address_id int4 REFERENCES address(id) ON DELETE CASCADE, 
-  date_ordered date NOT 
+  date_ordered date NOT NULL
 );
 
 CREATE TABLE transaction_cookie (
