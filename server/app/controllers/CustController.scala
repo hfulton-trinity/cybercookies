@@ -50,7 +50,7 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def newCustomer = Action { implicit request =>
-  //NEEDS WORK
+  //NEEDS WORK- how to validate not a current user
   Ok(Json.toJson(false))
   /*
     withJsonBody[NewUserData] {ud =>
@@ -62,4 +62,11 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
       }
     }*/
   }
+
+  /*Methods:
+      Get troop email --> sends email as string
+      Get next delivery
+      Logout
+  */
+
 }

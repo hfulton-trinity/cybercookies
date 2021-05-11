@@ -17,7 +17,7 @@ class Application @Inject()(cc: ControllerComponents) extends AbstractController
   }
 
   def getCookies = Action { implicit request =>
-    Ok(views.html.home()) //placeholder!!
+    Ok(views.html.home()) //send cookie # for img and string (Name: details)
   }
 
 }

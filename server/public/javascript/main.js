@@ -9,7 +9,16 @@ const thinmint = document.getElementById("thinmint").value;
 const tagalong = document.getElementById("tagalong").value;
 const samoas = document.getElementById("samoas").value;
 const smores = document.getElementById("smores").value;
+const toffeetastic = document.getElementById("toffeetastic").value;
+const toast = document.getElementById("toast-yay").value;
+const shortbread = document.getElementById("shortbreadtrefoils").value;
+const lemonups = document.getElementById("lemonups").value;
+const lemonades = document.getElementById("lemonades").value;
+const dosidos = document.getElementById("dosidos").value;
+const caramelchoc = document.getElementById("caramelchocchip").value;
+const abcsmores = document.getElementById("abcsmores").value;
 const employees = document.getElementById("employees").value;
+const cookie_imgs = [thinmint, tagalong, samoas, smores, toffeetastic, toast, shortbread, lemonups, lemonades, dosidos, caramelchoc, abcsmores];
 
 class ApplicationMainComponent extends React.Component {
   constructor(props){
@@ -63,8 +72,8 @@ class HeaderComponent extends React.Component {
           ce('button', {onClick: e => this.handleChange(e,"Cookies")}, 'Cookies'),
           ce('button', {onClick: e => this.showMenu(e)}, 'Login'),
           ce('div', {className: "menu",ref: element => {this.dropdownMenu = element}},
-            ce('button',{onClick: e => this.transferCust(e)},'Customer Login'),
-            ce('button',{onClick: e => this.transferTroop(e)},'Troop Login'),
+            ce('a',{href: '/customer'},'Customer Login'),
+            ce('a',{href: '/troop'},'Troop Login'),
           ),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us')
         )
@@ -80,14 +89,6 @@ class HeaderComponent extends React.Component {
         )
       );
     }
-  }
-
-  transferCust(e){
-    ce('Redirect',{to: custPage});
-  }
-
-  transferTroop(e){
-    ce('Redirect',{to: troopPage});
   }
 
   showMenu(e){
@@ -110,10 +111,6 @@ class HomeComponent extends React.Component {
     super(props);
   }
 
-  //componentDidMount(){
-    //load cookies
-  //}
-
   render(){
     console.log("rendering home");
     return ce('div',null,
@@ -124,7 +121,7 @@ class HomeComponent extends React.Component {
         ce('img', {src: tagalong, alt: "Tagalong", width: 200},null),
         ce('img', {src: samoas, alt: "Samoas", width: 200},null),
         ce('img', {src: smores, alt: "Smores", width: 200},null)
-        //images here with hover method
+        //hover method?
       )
     );
   }
@@ -160,21 +157,44 @@ class AboutComponent extends React.Component {
     );
   }
 }
-
+//Needs testing
 class CookieComponent extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      cookies: []
+    };
   }
 
   componentDidMount(){
-    //load cookies
+    this.loadCookies();
   }
 
   render(){
-    return ce('div',{id:"cookies"},null);
-    //Featured cookie bar (images with names)
-    //Scroll through cookie images and descriptions
+    return ce('div',{id:"cookies"},
+      ce('div',{id:"featured_cookies"},
+        ce('h2', null, 'Featured Cookies:')
+        ce('img', {src: thinmint, alt: "Thin Mint", width: 200},null),
+        ce('img', {src: tagalong, alt: "Tagalong", width: 200},null),
+        ce('img', {src: samoas, alt: "Samoas", width: 200},null),
+        ce('img', {src: smores, alt: "Smores", width: 200},null),
+        ce('br'),
+        'Cookies shown above (left to right): Thin Mints, Tagalongs, Samoas, Smores'
+      ), ce('div',{id:"all_cookies"},
+        ce('ul', null,
+          this.state.cookies.map((cookie_details,index) => {
+            ce('li', {key: index},
+              ce('img',{src: cookie_imgs[index], alt: "", width: 200},null),
+              ce('p',null,cookie_details)
+            )
+          })
+        )
+      )
+    );
+  }
 
+  loadCookies(){
+    fetch(getAllCookies).then(res=>res.json()).then(cookies => this.setState({cookies}));
   }
 }
 

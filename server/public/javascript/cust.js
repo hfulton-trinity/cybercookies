@@ -4,6 +4,8 @@ const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
 const logInCust = document.getElementById("custLoginRoute").value;
 const addCust = document.getElementById("newCustRoute").value;
+const sendTransact = document.getElementById("transactionRoute").value;
+const getTroopEmail = document.getElementById("troopEmailRoute").value;
 
 class CustomerMainComponent extends React.Component {
   constructor(props){
@@ -86,7 +88,9 @@ class LoginCustComponent extends React.Component {
         ce('h2',null,'Login'),
         'Username:',ce('input',{type: "text", id: "username", value: this.state.username, onChange: e => this.typingHandler(e)}),
         ce('br'),'Password:',ce('input',{type: "text", id: "password", value: this.state.password, onChange: e => this.typingHandler(e)}),
-        ce('br'), ce('button', {onClick: e => login(e)}, 'Login'), ce('br')
+        ce('br'), ce('button', {onClick: e => this.login(e)}, 'Login'),
+        ce('span', {id: "login-message"}, this.state.loginErrorInfo),
+        ce('br')
       ), ce('form', {id: "create_customer"},
         ce('h2',null,'Create a Customer Account'),
         'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),
@@ -94,19 +98,15 @@ class LoginCustComponent extends React.Component {
         ce('br'),'Password:',ce('input',{type: "text", id: "new_password", value: this.state.new_password, onChange: e => this.typingHandler(e)}),
         ce('br'),'Email:',ce('input',{type: "text", id: "email", value: this.state.email, onChange: e => this.typingHandler(e)}),
         ce('br'),'Troop:',ce('input',{type: "number", id: "troop", value: this.state.troop, onChange: e => this.typingHandler(e)}),
-        ce('br'), ce('button', {onClick: e => makeUser()}, 'Create Account')
-      ), ce('br'), ce('button', {onClick: e => transferTroop(e)}, 'Click here if you are a troop')
+        ce('br'), ce('button', {onClick: e => this.makeUser()}, 'Create Account'), ce('span', {id: "login-message"}, this.state.createErrorInfo),
+      ), ce('br'), ce('span',null,ce('a',{href:"/"},"Home Page")),
+      ce('br'),
+      ce('span',null,ce('a',{href:"/troop"},"Troop Login Page"))
     );
   }
 
-  transferTroop(e){
-    ce('Redirect',{to: troopPage});
-  }
-
   typingHandler(e) {
-    console.log(e.target.value);
     this.setState({[e.target['id']]: e.target.value});
-    console.log([e.target['id']]);
   }
 
   login(e) {
@@ -121,7 +121,7 @@ class LoginCustComponent extends React.Component {
       if(data) {
         this.props.doLogin();
       } else {
-        this.setState({loginErrorInfo: "Do not pass GO"});
+        this.setState({loginErrorInfo: "Login Failed"});
       }
     });
   }
@@ -140,7 +140,7 @@ class LoginCustComponent extends React.Component {
       if(data) {
         this.props.doLogin();
       } else {
-        this.setState({createErrorInfo: "You are not welcome here"});
+        this.setState({createErrorInfo: "Could not create new account. Please try again."});
       }
     });
   }
@@ -166,30 +166,47 @@ class ContactComponent extends React.Component {
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
-    console.log([e.target['id']]);
   }
 }
 
 class HomeComponent extends React.Component {
   constructor(props){
     super(props);
+    this.state= {
+      next_delivery: "",
+      troop_email: ""
+    }
   }
-  //need to load in things
+
+  componentDidMount(){
+    this.loadTroopEmail();
+    this.loadNextDelivery();
+  }
+
   render(){
     return ce('div', null,
       ce('h2',null,'Next Scheduled Delivery'),
       ce('div',{id: "delivery_details"},
-        'Troop: ', ce(),
-        'Delivery Estimate: ', ce(), ' ', ce(),
-        ce('link',{},'Click here to view order receipt')
+        ce('p',null,this.state.next_delivery)
+        // implement receipts? ce('link',{},'Click here to view order receipt')
       ),
       ce('h2',null,'Contact Your Troop'),
       ce('div',{id: "contact_troop"},
         'Your troop would love to hear from you with any questions or concerns.',
         ' In the case of special delivery instructions, accommodations are made on a case by case basis and are fulfilled at the troop’s discretion. ',
-        ce('link',{},'Click here to email your troop directly'),', or feel free to use the Contact Us page if you would like to speak with corporate.'
+        ce('a',{href: this.state.troop_email},'Click here to email your troop directly'),', or feel free to use the Contact Us page if you would like to speak with corporate.'
       )
     );
+  }
+
+//IDK HOW TO GET THIS
+  loadTroopEmail(){
+    fetch(getTroopEmail).then(res=>res.json()).then(email => this.setState({troop_email: "mailto: " +email}));
+  }
+
+//Need Array [Troop, date, time]
+  loadNextDelivery(){
+    fetch(getNextDelivery).then(res=>res.json()).then(delivery => this.setState({next_delivery: delivery}));
   }
 }
 
@@ -197,8 +214,14 @@ class OrderComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      search: ""
+      search: "",
+      cookies: "",
+      quantity: 0
     };
+  }
+
+  componentDidMount(){
+    this.loadAvailCookies();
   }
 
   render(){
@@ -206,7 +229,27 @@ class OrderComponent extends React.Component {
       'Search for cookies: ', ce('input',{type: "text", value: this.state.search, onChange: e => this.typingHandler(e)}),
       //Show cookies??? Image, name, descrip, price, avail
       //quantity input, add to cart button
+      ce('div', {id: "avail_cookies"},
+        ce('ul', null,
+          this.state.cookies.map((cookie_details,index) => {
+            ce('li', {key: index},
+              ce('img',{src: cookie_imgs[index], alt: "", width: 200},null),
+              ce('p', null, cookie_details)),
+              ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),
+              ce('button',{onClick: e => this.cartUpdate(e)},'Add to Cart')
+            
+          })
+        )
+      )
     );
+  }
+
+  loadAvailCookies(){
+
+  }
+
+  cartUpdate(e){
+
   }
 
   typingHandler(e) {
@@ -228,7 +271,9 @@ class CartComponent extends React.Component {
       apt: 0,
       card_no: "",
       crv: "",
-      exp: ""/*date??*/
+      exp: ""/*date??*/,
+      orderStatus: "",
+      orders: []
     };
   }
 
@@ -236,11 +281,8 @@ class CartComponent extends React.Component {
     return ce('div',null,
       ce('div', {id: "order"},
         ce('h2', null, 'Current Order'),
-        //Table??
-        ce('table', {id: "order"},
-          ce('tbody', null,
-            //table fillings
-          )
+        ce('ul', null,
+          this.state.orders.map((...) => ce('li', {key: ...}, ...))
         )
       ), ce('aside',{id: "checkout"},
         'Shipping Address:', ce('br'),
@@ -258,12 +300,31 @@ class CartComponent extends React.Component {
         'CSV: ', ce('input',{type: "text", value: this.state.crv, onChange: e => this.typingHandler(e)}),
         //Date???
         'Exp. Date: ', ce('input',{type: "date", value: this.state.exp, onChange: e => this.typingHandler(e)}),
-        ce('br'), ce('button', {/*store order*/}, 'Confirm and order')
+        ce('br'), ce('button', {onClick: e => e.sendTransaction()}, 'Confirm and order'),
+        ce('br'),ce('span', {id: "order-message"}, this.state.orderStatus),
       )
     );
   }
 
+  sendTransaction() {
+    //how best to send??
+    const address = [this.state.street, this.state.city, this.state.state, this.state.zip, this.state.apt_no];
+
+    fetch(sendTransact, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
+        body: JSON.stringify({"address": address})
+    }).then(res => res.json()).then(data => {
+      if(data) {
+        this.props.doLogin();
+      } else {
+        this.setState({orderStatus: "Order failed. Please try again."});
+      }
+    });
+  }
+
   //Transaction(customer: String, seller: Int, deliveryMethod: String, deliveryInstructions: String, address: Address, date_ordered: Date)
+  //most of this grabbed in controller?
 }
 
 
