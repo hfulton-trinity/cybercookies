@@ -72,7 +72,7 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
   def getTroopEmail = Action { implicit request =>
     withSessionUsername{ username =>
       val user = model.getUserInfo(username)
-      val troop_email = troop_model.getTroopInformationFromTroop(user.troop_to_buy_from).email //need some way to do this in model
+      val troop_email = troop_model.getTroopInformationNoPassword(user.troop_to_buy_from).email //need some way to do this in model
       Ok(Json.toJson(troop_email))
     }
   }

@@ -70,6 +70,24 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
         tup._2.password, tup._2.nextRestock, tup._2.email))).head)
   }
 
+  def getTroopInformationNoPassword(troopN: Int): Future[SharedMessages.Troop] = {
+    val addyTroopRow =
+      db.run(
+        (for {
+          troopRow <- Troop if troopRow.number === troopN
+          address <- Address if address.id === troopRow.addressId.get
+        } yield {
+          (address, troopRow)
+        }).result
+      )
+    
+    addyTroopRow.map(_.map(tup => 
+      (SharedMessages.Troop(tup._2.number, 
+        SharedMessages.Address(tup._1.streetAddress, tup._1.city, tup._1.state, tup._1.country, tup._1.zip, tup._1.apartmentNumber), 
+        tup._2.password, tup._2.nextRestock, tup._2.email))).head)
+  }
+
+
   def addCookies(troopN: Int, cookieId: Int, q: Quantity): Future[Int] = {
     val cookies = db.run(Cookie.filter(c => c.id === cookieId).result)
     cookies.flatMap(c => db.run(Cookie += CookieRow(-1, c.head.name, c.head.description)))

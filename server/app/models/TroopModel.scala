@@ -13,7 +13,7 @@ trait TroopModel {
   def newTroop(t: Troop): Unit
   def getAvailableCookies(troopN: Int): List[(Cookie, Price, Quantity)]
   def getTroopInformation(troopN: Int, password: String): Troop
-  def getTroopInformationFromTroop(troopN: Int): Troop
+  def getTroopInformationNoPassword(troopN: Int): Troop
   def addCookies(troopN: Int, cookieId: Int, q: Quantity): Unit
   def newCookie(troopN: Int, c: Cookie, q: Quantity, p: Price): Unit
   def getCookieInfo(cookieId: Int): Cookie

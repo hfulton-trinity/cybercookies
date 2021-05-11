@@ -73,7 +73,7 @@ class InMemoryTroop extends TroopModel {
     }
   }
 
-    def getTroopInformationFromTroop(troopN: Int): Troop = {
+  def getTroopInformationNoPassword(troopN: Int): Troop = {
     val validTroops = troops.filter(tup => (tup._2.n == troopN) ).map(tup => tup._2).toList
     
     if(validTroops.length < 1) {

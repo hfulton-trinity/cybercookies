@@ -20,7 +20,8 @@ CREATE TABLE troop (
 CREATE TABLE cookie (
   id SERIAL PRIMARY KEY, 
   name varchar(40) NOT NULL, 
-  description varchar(1000) NOT NULL
+  description varchar(1000) NOT NULL,
+  imageIndex integer NOT NULL
 );
 
 CREATE TABLE users (
