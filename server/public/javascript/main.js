@@ -173,7 +173,7 @@ class CookieComponent extends React.Component {
   render(){
     return ce('div',{id:"cookies"},
       ce('div',{id:"featured_cookies"},
-        ce('h2', null, 'Featured Cookies:')
+        ce('h2', null, 'Featured Cookies:'),
         ce('img', {src: thinmint, alt: "Thin Mint", width: 200},null),
         ce('img', {src: tagalong, alt: "Tagalong", width: 200},null),
         ce('img', {src: samoas, alt: "Samoas", width: 200},null),
