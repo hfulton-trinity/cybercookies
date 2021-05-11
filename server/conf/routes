@@ -12,12 +12,13 @@ POST       /createCustomer               controllers.CustController.newCustomer
 
 
 #Troop page
-#POST        /validateTroop              controllers.TroopController.validate
-#POST        /createTroop                controllers.TroopController.createTroop
+POST        /validateTroop              controllers.TroopController.validate
+POST        /createTroop                controllers.TroopController.createTroop
 GET          /allOrders                   controllers.TroopController.allOrders
 GET           /outStock                     controllers.TroopController.outStock
 GET           /allStock                   controllers.TroopController.allStock
 GET           /totalSales                   controllers.TroopController.totalSales
+POST          /addStock                     controllers.TroopController.addStock
 
 # Prefix must match `play.assets.urlPrefix`
 GET        /assets/*file                 controllers.Assets.at(file)

@@ -7,9 +7,10 @@
   <input type="hidden" id="allOrdersRoute" value=@routes.TroopController.allOrders()>
   <input type="hidden" id="OutStockRoute" value=@routes.TroopController.outStock()>
   <input type="hidden" id="AllStockRoute" value=@routes.TroopController.allStock()>
-  <!-- <input type="hidden" id="troopValidateRoute" value=routes.TroopController.validate()>
-  <input type="hidden" id="addTroupRoute" value=routes.TroopController.createTroop()>   -->
+  <input type="hidden" id="troopValidateRoute" value=@routes.TroopController.validate()>
+  <input type="hidden" id="addTroopRoute" value=@routes.TroopController.createTroop()>  
   <input type="hidden" id="TroopSalesRoute" value=@routes.TroopController.totalSales()>
+  <input type="hidden" id="AddStockRoute" value=@routes.TroopController.addStock()>
   <div id="troop-root"></div>
   <script src="@routes.Assets.versioned("javascript/troop.js")"></script>
 }

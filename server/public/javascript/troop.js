@@ -3,18 +3,18 @@
 
 const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
-// const validateTroop=document.getElementById("troopValidateRoute").value;
-// const addTroop=document.getElementById("addTroopRoute").value;
+ const validateTroop=document.getElementById("troopValidateRoute").value;
+ const addTroop=document.getElementById("addTroopRoute").value;
  const allOrders=document.getElementById("allOrdersRoute").value;
  const OutStock=document.getElementById("OutStockRoute").value;
  const AllStock=document.getElementById("AllStockRoute").value;
  const salesRoute=document.getElementById("TroopSalesRoute").value;
-// const addStock=document.getElementById("AddStockRoute").value;
+ const addStock=document.getElementById("AddStockRoute").value;
 
 class TroopMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: false};
+    this.state = {page: "H", loggedIn: true};
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
@@ -78,7 +78,13 @@ class LoginTroopComponent extends React.Component {
       loginErrorInfo: "",
       new_username: 0,
       new_password: "",
-      createErrorInfo: ""
+      createErrorInfo: "",
+      new_addy:"",
+      new_zip:"",
+      new_city:"",
+      new_state:"",
+      restock:"",
+      email:""
     };
   }
   render(){
@@ -101,6 +107,23 @@ class LoginTroopComponent extends React.Component {
     'Password: ',
     ce('input', {type: "password", id: "new_password", value: this.state.new_password, onChange: e => this.changerHandler(e)}),
     ce('br'),
+    'Street Address:',
+    ce('input',{type:"text", id:"new_addy",value:this.state.new_addy, onChange:e=> this.changerHandler(e)}),
+    ce('br'),
+    'City:',
+    ce('input',{type:"text", id:"new_city",value:this.state.new_city, onChange:e=> this.changerHandler(e)}),
+    ce('br'),
+    "State:",
+    ce('input',{type:"text", id:"new_state",value:this.state.new_state, onChange:e=> this.changerHandler(e)}),
+    ce('br'),
+    "Zip Code:",
+    ce('input',{type:"text", id:"new_zip",value:this.state.new_zip, onChange:e=> this.changerHandler(e)}),
+    ce('br'),
+    // ce('input',{type:"text", id:"restock",value:this.state.restock, onChange:e=> this.changerHandler(e)}),
+    // ce('br'),
+    'Email',
+    ce('input',{type:"text", id:"email",value:this.state.email, onChange:e=> this.changerHandler(e)}),
+    ce('br'),
     ce('button', {onClick: e => this.makeUser(e)}, 'Create User'),
     ce('span', {id: "create-message"}, this.state.createErrorInfo),
     ce('br'),
@@ -121,12 +144,11 @@ class LoginTroopComponent extends React.Component {
   login(e) {
     const n = this.state.username;
     const password = this.state.password;
-    fetch(logInTroop, {
+    fetch(ValidateTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
         body: JSON.stringify({n, password})
     }).then(res => res.json()).then(data => {
-      console.log(data);
       if(data) {
         this.props.doLogin();
       } else {
@@ -134,13 +156,12 @@ class LoginTroopComponent extends React.Component {
       }
     });
   }
-//case class Troop(n: Int, address: Address, password: String, next_restock: Date, email: String)
   makeUser() {
-    const n= this.state.new_username
-    const address= "generic address";
+    const n= this.state.new_username;
+    const address= [this.state.new_addy,this.state.new_city,this.state.new_state,this.state.new_zip];
     const password=this.state.password;
-    const next_restock="";//TODO make date
-    const email="generic email";
+    const next_restock="2021-05-26";
+    const email=thist.state.email;
     fetch(addTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
@@ -181,7 +202,6 @@ class ContactComponent extends React.Component {
 class HomeComponent extends React.Component {
   constructor(props){
     super(props);
-    //this.state={orders: ["test order 1", "test order 2"], out: ["test out 1", "test out 2"]};
     this.state={
       orders:[],
       out:[]
@@ -220,7 +240,8 @@ class StockComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      Stock:["TEST stock 1", "test stock 2"],
+      //Stock:["TEST stock 1", "test stock 2"],
+      Stock:[],
       new_cookie:"",
       new_amount:""
     };
@@ -249,18 +270,18 @@ class StockComponent extends React.Component {
   }
   SendStock(e){
     
-    // fetch(addStock, { 
-    //   method: 'POST',
-    //   headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken },
-    //   body: JSON.stringify({username,password,"0.0"})
-    // }).then(res => res.json()).then(data => {
-    //   if(data) {
-    //     this.loadTasks();
-    //     this.setState({ errorMessage: "", newMessage: "" ,newUser:""});
-    //   } else {
-    //     this.setState({ errorMessage: "Failed to add." });
-    //   }
-    // });
+    fetch(addStock, { 
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken },
+      body: JSON.stringify({username,password,cost:"0.0"})
+    }).then(res => res.json()).then(data => {
+      if(data) {
+        this.loadTasks();
+        this.setState({ errorMessage: "", newMessage: "" ,newUser:""});
+      } else {
+        this.setState({ errorMessage: "Failed to add." });
+      }
+    });
   }
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
@@ -274,8 +295,6 @@ class BookKeepingComponent extends React.Component {
     this.state = {
       transactions:[],
       sales:[]
-      //transactions:["Test transaction 1", "Test Transaction 2"],
-      //sales:["Test Sale1", "Test Sale2"]
     };
   }
   compmonentDidMount(){
