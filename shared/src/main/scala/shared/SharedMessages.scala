@@ -10,7 +10,7 @@ object SharedMessages {
   case class Troop(n: Int, address: Address, password: String, next_restock: Date, email: String)
   case class User(username: String, password: String, email: String, full_name: String, troop_to_buy_from: Int)
   case class Transaction(customer: Int, seller: Int, deliveryMethod: String, deliveryInstructions: String, address: Address, date_ordered: Date)
-  case class Stock(cookie:Int,num:Int)
+  case class Stock(cookie:String,num:Int)
   case class TroopData(username:Int,address: Array[String],password:String,date:String,email:String)
   case class Troop2(username:Int,password:String)
 }

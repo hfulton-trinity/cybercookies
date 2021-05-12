@@ -266,7 +266,7 @@ class StockComponent extends React.Component {
         ce('ul',null,this.state.Stock.map((stock,index)=>ce('li',{key:index},stock)))),
       ce('h2',null,'Enter Inventory'),
       ce('div',{id:'Enter_Inventory'},
-          ce('input',{type:'number',id:"new_cookie",value:this.state.new_cookie,onChange: e=>this.typingHandler(e)}),
+          ce('input',{type:'text',id:"new_cookie",value:this.state.new_cookie,onChange: e=>this.typingHandler(e)}),
           ce('br'),
           ce('input',{type:'number',id:"new_amount",value:this.state.new_amount,onChange: e=>this.typingHandler(e)}),
           ce('br'),

@@ -136,8 +136,7 @@ def createTroop = Action.async { implicit request =>
     println("addstock")
     withSessionUserid{id=>
       withJsonBody[Stock]{ud =>
-        model.getCookieId()
-        model.addCookies(id,ud.cookie,ud.num).map(count=>Ok(Json.toJson(count>0)))
+        model.getCookieId(ud.cookie).flatMap(out=>model.addCookies(id,out,ud.num.toInt).map(count=>Ok(Json.toJson(count>0))))
       }
     }
   }
