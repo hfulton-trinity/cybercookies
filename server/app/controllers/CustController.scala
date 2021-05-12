@@ -54,8 +54,8 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
 
   }
 
-  def withSessionUsername(f: String => Result)(implicit request: Request[AnyContent]) = {
-    request.session.get("username").map(f).getOrElse(Ok(Json.toJson(Seq.empty[String])))
+  def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+    request.session.get("username").map(f).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
 
   def validateCustomer = Action.async { implicit request =>
@@ -87,17 +87,28 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   def getTroopEmail = Action.async { implicit request =>
     withSessionUsername{ username =>
       val user = model.getUserInfo(username)
-      val troop_email = troop_model.getTroopInformationNoPassword(user.troop_to_buy_from).email
-      Ok(Json.toJson(troop_email))
+      val troop_email = user.flatMap {u =>
+        troop_model.getTroopInformationNoPassword(u.troop_to_buy_from).map(t => t.email)
+      }
+      troop_email.map(tE => Ok(Json.toJson(tE)))
     }
   }
 
   def getNextDelivery = Action.async { implicit request =>
     withSessionUsername{ username =>
-      val transact = model.myTransactions(username).sortBy(x => x.date_ordered).head
-      val deliv_date = new Date(transact.date_ordered.getTime() + 1210000000)
-      val dispTransact = "Troop: " + transact.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + transact.address
-      Ok(Json.toJson(dispTransact))
+      val transactFut = model.myTransactions(username)
+      val transaction = transactFut.map { t =>  
+        t.sortBy(x => x.date_ordered).head
+      }
+      val deliv_date = transaction.map { transact => 
+        new Date(transact.date_ordered.getTime() + 1210000000)
+      }
+
+      val dispTransact = transaction.flatMap { transact => deliv_date.map { deliv => 
+          "Troop: " + transact.seller + "   Expected Delivery Date: " + deliv + "    Address for delivery: " + transact.address
+        }
+      }
+      dispTransact.map(dT => Ok(Json.toJson(dT)))
     }
   }
 
@@ -110,18 +121,24 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
 
   def getAvailCookies = Action.async { implicit request =>
     withSessionUsername{ username =>
-      Ok(Json.toJson(troop_model.getAvailableCookies(model.getUserInfo(username).troop_to_buy_from).map {
-        case (x,price,q) => ""+x.name+": "+x.description+" Price: "+ price+ " Quantity Available: "+q+","+x.img_index
-      }))
+      val getUserInfo = model.getUserInfo(username)
+      getUserInfo.flatMap { ui =>
+        val availCookies = troop_model.getAvailableCookies(ui.troop_to_buy_from)
+        availCookies.map { aC => 
+          Ok(Json.toJson(aC.map {
+          case (x, price, q) => ""+x.name+": "+x.description+" Price: "+ price+ " Quantity Available: "+q+","+x.img_index
+        }))
+        }
+      }
     }
   }
 
   def sendTransaction = Action.async { implicit request =>
-    Ok(Json.toJson(false)) //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
+    Future.successful(Ok(Json.toJson(false))) //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
   }
 
   def logout = Action.async { implicit request =>
-    Ok(Json.toJson(true)).withSession(request.session - "username")
+    Future.successful(Ok(Json.toJson(true)).withSession(request.session - "username"))
   }
 
 }

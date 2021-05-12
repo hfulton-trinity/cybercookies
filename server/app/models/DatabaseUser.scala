@@ -12,7 +12,11 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
   type Password = String
 
   def newUser(u: SharedMessages.User): Future[Int] = {
-    db.run(Users += UsersRow(-1, u.username, u.password, u.email, u.full_name, Some(u.troop_to_buy_from)))
+    val matches = db.run(Users.filter(userRow => userRow.username === u.username && userRow.password === u.password).result)
+    matches.flatMap{uRows => 
+      if(uRows.isEmpty) db.run(Users += UsersRow(-1, u.username, u.password, u.email, u.full_name, Some(u.troop_to_buy_from)))
+      else Future(0)
+    }   
   }
 
   def logIn(u: Username, p: Password): Future[SharedMessages.User] = {
@@ -27,7 +31,10 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
 
   def getUserInfo(u: Username): Future[SharedMessages.User] = {
     val matches = db.run(Users.filter(userRow => userRow.username === u).result)
-    matches.map(uRow => SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.get))
+    matches.map {uRow => 
+      if(uRow.nonEmpty) SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.get)
+      else null
+    }
   }
 
   def newTransaction(t: SharedMessages.Transaction, l: List[(SharedMessages.Cookie, Int, Double)]): Future[Int] = {

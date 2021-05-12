@@ -12,17 +12,33 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
   type Price = Double
 
   def newTroop(t: SharedMessages.Troop): Future[Int] = {
-    val addy = t.address
+    val addyTroopRow =
+      db.run(
+        (for {
+          troopRow <- Troop if troopRow.number === t.n && troopRow.password === t.password
+          address <- Address if address.id === troopRow.addressId.get
+        } yield {
+          (address, troopRow)
+        }).result
+      )
+    
+    addyTroopRow.flatMap{ tRow => 
+      if(tRow.isEmpty) {
+        val addy = t.address
 
-    db.run(Address += AddressRow(-1, addy.street, addy.city, addy.state, addy.country, addy.zip, addy.apartment))
-    val troopRowFut = db.run(
-      (for {
-        address <- Address if address.streetAddress === addy.street
-      } yield {
-        address.id
-      }).result)
+        db.run(Address += AddressRow(-1, addy.street, addy.city, addy.state, addy.country, addy.zip, addy.apartment))
+        val troopRowFut = db.run(
+          (for {
+            address <- Address if address.streetAddress === addy.street
+          } yield {
+            address.id
+          }).result)
 
-    troopRowFut.flatMap(seq => db.run(Troop += TroopRow(-1, t.n, Some(seq.head), t.password, t.next_restock, t.email)))
+        troopRowFut.flatMap(seq => db.run(Troop += TroopRow(-1, t.n, Some(seq.head), t.password, t.next_restock, t.email)))
+      } else {
+        Future(0)
+      }
+    }
   }
 
   def getAvailableCookies(troopN: Int): Future[Seq[(SharedMessages.Cookie, Price, Quantity)]] = {
@@ -106,6 +122,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
 
   def newCookie(troopN: Int, c: SharedMessages.Cookie, q: Quantity, p: Price): Future[Int] = {
     db.run(Cookie += CookieRow(-1, c.name, c.description, c.img_index))
+
     val tIDcID = db.run(
       (for{
         troop <- Troop if troop.number === troopN
