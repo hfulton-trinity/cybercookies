@@ -122,7 +122,12 @@ def createTroop = Action.async { implicit request =>
   def allStock = Action.async{implicit request=>//the total stock of the troop
     println("allstock")
     withSessionUsername{username=>
-      model.getAvailableCookies(username.toInt).map(out=>Ok(Json.toJson(out)))}
+      model.getAvailableCookies(username.toInt).map{ out => 
+        val res = out.map(tup => Seq(tup._1.name + " | ", tup._1.description + "  | ", tup._2.toString + " | ", tup._3.toString + " | "))
+        println(res)
+        Ok(Json.toJson(res))
+      }
+    }
   }
 
   def totalSales= Action.async{ implicit request=>//all sales
@@ -134,16 +139,26 @@ def createTroop = Action.async { implicit request =>
 
   def addStock= Action.async{ implicit request=>
     println("addstock")
-    withSessionUserid{id=>
+    withSessionUsername{id=>
       withJsonBody[Stock]{ud =>
-        model.getCookieId(ud.cookie).flatMap(out=>model.addCookies(id,out,ud.num.toInt).map(count=>Ok(Json.toJson(count>0))))
+        val cID = model.getCookieId(ud.cookie)
+        cID.flatMap { out =>
+          println(out)
+          model.addCookies(id.toInt, out, ud.num.toInt).map{ count=>
+            println(count)
+            Ok(Json.toJson(count > 0))
+          }
+        }
       }
     }
   }
-  def logout =TODO
+   def logout = Action { implicit request =>
+    Ok(Json.toJson(true)).withSession(request.session - "username")
+  }
 }
 
 
+//In Memory Controller
 
 // package controllers
 

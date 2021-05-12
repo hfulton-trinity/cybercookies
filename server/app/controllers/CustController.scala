@@ -151,9 +151,12 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     Future.successful(Ok(Json.toJson(false))) //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
   }
 
-  def logout = Action.async { implicit request =>
-    println("logout")
-    Future.successful(Ok(Json.toJson(true)).withSession(request.session - "username"))
+  // def logout = Action.async { implicit request =>
+  //   println("logout")
+  //   Future.successful(Ok(Json.toJson(true)).withSession(request.session - "username"))
+  // }
+   def logout = Action { implicit request =>
+    Ok(Json.toJson(true)).withSession(request.session - "username")
   }
 
 }

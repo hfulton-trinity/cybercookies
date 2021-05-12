@@ -27,10 +27,10 @@ class TroopMainComponent extends React.Component {
     if(this.state.loggedIn){
      // console.log(this.state.page);
       switch(this.state.page) {
-        case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}),ce(HomeComponent));
-        case "Stock": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(StockComponent));
-        case "BookKeeping": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(BookKeepingComponent));
-        case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(ContactComponent));
+        case "H": return ce('div', null, ce(HeaderComponent, {doLogout:()=>this.setState({loggedIn:false}),changePage: this.handlePageChange}),ce(HomeComponent));
+        case "Stock": return ce('div', null, ce(HeaderComponent, {doLogout:()=>this.setState({loggedIn:false}),changePage: this.handlePageChange}), ce(StockComponent));
+        case "BookKeeping": return ce('div', null, ce(HeaderComponent, {doLogout:()=>this.setState({loggedIn:false}),changePage: this.handlePageChange}), ce(BookKeepingComponent));
+        case "Contact": return ce('div', null, ce(HeaderComponent, {doLogout:()=>this.setState({loggedIn:false}),changePage: this.handlePageChange}), ce(ContactComponent));
         default: return ce('p',null,'FAIL');
       }
     } else {
@@ -57,10 +57,10 @@ class HeaderComponent extends React.Component {
   render(){
     //return null;
     return ce('div', 'null', ce('h2', null, 'CyberCookies'),
-        ce('nav',{id: "navbar_home"},
+        ce('nav',{className: "navbar_home"},
           ce('button', {onClick: e => this.handleChange(e,"H")}, 'Home'),
           ce('button', {onClick: e => this.handleChange(e,"Stock")}, 'SetStock'),
-          ce('button', {onClick: e => this.handleChange(e,"BookKeeping")}, 'BookKeeping'),
+          ce('button', {onClick: e => this.handleChange(e,"BookKeeping")}, 'Bookkeeping'),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us'),
           //ce('button', {onClick: e => this.handleChange(e,"H")}, 'Logout')//TODO log out feature
           ce('button',{onClick: e=> this.props.doLogout()}, 'Log Out')
@@ -88,8 +88,8 @@ class LoginTroopComponent extends React.Component {
     };
   }
   render(){
-    return ce('div', null, 
-    ce('h2', null, 'Login'),
+    return ce('div', {className:"troop_login"}, 
+    ce('h2', null, 'Login:'),
     ce('br'),
     'Troop Number: ', 
     ce('input', {type: "number", id: "username", value: this.state.username, onChange: e => this.changerHandler(e)}),
@@ -185,7 +185,7 @@ class ContactComponent extends React.Component {
   }
 
   render(){
-    return ce('div', {id: "contact_us"},
+    return ce('div', {className: "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'For general suggestions only.  For technical problems, idk figure it out.  Our typical response time is <never>!'),
       'Name:',ce('input',{type: "text",  id: "name",value: this.state.name, onChange: e => this.typingHandler(e)}),
@@ -211,7 +211,9 @@ class HomeComponent extends React.Component {
     super(props);
     this.state={
       orders:[],
-      out:[]
+      out:[],
+      hardcoded_orders:[["mlewis |","1 |","1 Trinity Place |","2021-05-12"],["khardee |", "1 |", "655 E Hildebrand Ave", "2021-05-12"]],//orders never implemented so have to hardocode
+      hardcoded_out:["Toast","Shortbread","Lemonade"]
     }
   }
 
@@ -221,14 +223,12 @@ class HomeComponent extends React.Component {
   render(){
     console.log(this.state.orders);
     console.log(this.state.out);
-    return ce('div',null,
-      ce('h2', null, 'Upcoming Orders'),
-      ce('div',{id:"order_details"},
-        ce('ul',null,this.state.orders.map((order,index)=>ce('li',{key:index},order)))
+    return ce('div',{className:"troop_home"},
+      ce('aside',{className:"order_details"}, ce('h2', null, 'Upcoming Orders'),
+        ce('ul',null,this.state.hardcoded_orders.map((order,index)=>ce('li',{key:index},order)))
       ),
     ce('br'),
-      ce('h2', null, 'Out of Stock Cookies'),
-      ce('div',{id:"out_stock_details"},ce('ul',null,this.state.out.map((order,index)=>ce('li',{key:index},order))))
+      ce('main',{className:"out_stock_details"},ce('h2', null, 'Out of Stock Cookies'),ce('ul',null,this.state.hardcoded_out.map((order,index)=>ce('li',{key:index},order))))
       
     );
   }
@@ -249,42 +249,44 @@ class StockComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      Stock:[],
+      stock:[],
       new_cookie:"",
       new_amount:""
     };
   }
-  compmonentDidMount(){
-    loadStock();
+  componentDidMount(){
+    this.loadStock();
   }
 
   render(){
-    return ce('div', null,
+    return ce('div', {className: "stock_component"},
       ce('h2',null, 'Current Stock'),
-      ce('div',{id:'Current_Stock'},
-        ce('ul',null,this.state.Stock.map((stock,index)=>ce('li',{key:index},stock)))),
+      ce('div',{className:'Current_Stock'},
+        ce('ul',null,this.state.stock.map((stock,index)=>ce('li',{key:index},stock)))),
       ce('h2',null,'Enter Inventory'),
-      ce('div',{id:'Enter_Inventory'},
-          ce('input',{type:'text',id:"new_cookie",value:this.state.new_cookie,onChange: e=>this.typingHandler(e)}),
+      ce('div',{className:'Enter_Inventory'},
+          ce('p',null,'Cookie: '),ce('input',{type:'text',id:"new_cookie",value:this.state.new_cookie,onChange: e=>this.typingHandler(e)}),
           ce('br'),
-          ce('input',{type:'number',id:"new_amount",value:this.state.new_amount,onChange: e=>this.typingHandler(e)}),
+          ce('p',null,'Amount: '),ce('input',{type:'number',id:"new_amount",value:this.state.new_amount,onChange: e=>this.typingHandler(e)}),
           ce('br'),
           ce('button',{onClick:e=>this.SendStock(e)},'Update Stock'))
     );
   }
   loadStock(){
-    fetch(AllStock).then(res=>res.json()).then(stock=>{
-      this.setState({stock});});
+    fetch(AllStock).then(res=>res.json()).then(instock=>{
+      console.log(this.state.stock);
+      this.setState({stock:instock});
+      console.log(this.state.stock);});
   }
   SendStock(e){
     
     fetch(addStock, { 
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken },
-      body: JSON.stringify({cookie:this.state.new_cookie, amount:this.state.new_amount})
+      body: JSON.stringify({cookie:this.state.new_cookie, num:parseInt(this.state.new_amount)})
     }).then(res => res.json()).then(data => {
       if(data) {
-        this.loadStock
+        this.loadStock();
         this.setState({new_cookie:"",new_amount:""});
       } else {
         this.setState({ errorMessage: "Failed to add." });
@@ -302,21 +304,23 @@ class BookKeepingComponent extends React.Component {
     super(props);
     this.state = {
       transactions:[],
-      sales:[]
-    };
+      sales:[],
+      hardcoded_transactions:[["mlewis |","1 |","1 Trinity Place |","2021-05-12"],["khardee |", "1 |", "655 E Hildebrand Ave", "2021-05-12"]],//transactions never got implemented on the customer side so have to fill in info
+      hardcoded_sales:[["Thinmint | 5 | 10.99"],['Lemonades | 2 | 9.99'],['Samoas | 3 |8.99']]
+    }
   }
   compmonentDidMount(){
     this.loadTrans();
     this.loadSales();
   }
   render(){
-    return ce('div',null,
-      ce('h2',null, 'Transaction List'),
-      ce('div',{id:'Transac_List'},
-      ce('ul', null,this.state.transactions.map((message, index) => ce('li', { key: index }, message))),
+    return ce('div',{className:"bookkeeping"},
+      
+      ce('aside',{className:'Transac_List'}, ce('h2',null, 'Transaction List'),
+      ce('ul', null,this.state.hardcoded_transactions.map((message, index) => ce('li', { key: index }, message))),
       ce('br')),
-      ce('h2',null,'Monthly Sales'),
-      ce('div',{id:'Month_Sales'},ce('ul', null,this.state.sales.map((message, index) => ce('li', { key: index }, message))))
+      ce('main',{class_Name:'Month_Sales'},ce('h2',null,'Monthly Sales'),
+      ce('ul', null,this.state.hardcoded_sales.map((message, index) => ce('li', { key: index }, message))))
     
     );
   }

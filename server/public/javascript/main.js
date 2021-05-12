@@ -66,21 +66,23 @@ class HeaderComponent extends React.Component {
   render(){
     if(this.state.showMenu){
       return ce('div', 'null', ce('h2', null, 'CyberCookies'),
-        ce('nav',{id: "navbar_home"},
+        ce('nav',{className: "navbar_home"},
           ce('button', {onClick: e => this.handleChange(e,"H")}, 'Home'),
           ce('button', {onClick: e => this.handleChange(e,"About")}, 'About Us'),
           ce('button', {onClick: e => this.handleChange(e,"Cookies")}, 'Cookies'),
-          ce('button', {onClick: e => this.showMenu(e)}, 'Login'),
-          ce('div', {className: "menu",ref: element => {this.dropdownMenu = element}},
-            ce('a',{href: '/customer'},'Customer Login'),
-            ce('a',{href: '/troop'},'Troop Login'),
+          ce('div',{className: "dropdown"},
+            ce('button', {onClick: e => this.showMenu(e)}, 'Login'),
+            ce('div', {className: "menu",ref: element => {this.dropdownMenu = element}},
+              ce('a',{href: '/customer'},'Customer Login'),
+              ce('a',{href: '/troop'},'Troop Login'),
+            )
           ),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us')
         )
       );
     } else {
       return ce('div', 'null', ce('h2', null, 'CyberCookies'),
-        ce('nav',{id: "navbar_home"},
+        ce('nav',{className: "navbar_home"},
           ce('button', {onClick: e => this.handleChange(e,"H")}, 'Home'),
           ce('button', {onClick: e => this.handleChange(e,"About")}, 'About Us'),
           ce('button', {onClick: e => this.handleChange(e,"Cookies")}, 'Cookies'),
@@ -113,14 +115,14 @@ class HomeComponent extends React.Component {
 
   render(){
     console.log("rendering home");
-    return ce('div',null,
+    return ce('div',{className: "home_component"},
       ce('h3',null,'Welcome one and all to your virtual connection with your girl scout cookie dealer'),
       ce('h5',null,'Most Popular Cookies'),
-      ce('div',{id: "cookie_bar"},
-        ce('img', {src: thinmint, alt: "Thin Mint", width: 200},null),
-        ce('img', {src: tagalong, alt: "Tagalong", width: 200},null),
-        ce('img', {src: samoas, alt: "Samoas", width: 200},null),
-        ce('img', {src: smores, alt: "Smores", width: 200},null)
+      ce('div',{className: "cookie_bar"},
+        ce('img', {src: thinmint, alt: "Thin Mint", width: 400},null),
+        ce('img', {src: tagalong, alt: "Tagalong", width: 400},null),
+        ce('img', {src: samoas, alt: "Samoas", width: 400},null),
+        ce('img', {src: smores, alt: "Smores", width: 400},null)
         //hover method?
       )
     );
@@ -133,27 +135,26 @@ class AboutComponent extends React.Component {
   }
 
   render(){
-    return ce('div', null,
-      ce('h1',null,'About Us'),
+    return ce('div', {className: "about_component"},
+      ce('h2',null,'About Us'),
       ce('br'),
       //Mission Statement
       ce('h2',null,"Why We're Here"),
       ce('br'),
-      ce('h4',null,'Our Corporate Mission is to Empower Individuals Worldwide to Enjoy Girl Scout Cookies(TM) in any Way Possible'),
+      ce('h3',null,'Our Corporate Mission is to Empower Individuals Worldwide to Enjoy Girl Scout Cookies™ in any Way Possible'),
       ce('br'),
       //Vision for Future
       ce('h2',null,"Our Vision For The Future"),
       ce('br'),
-      'We envision a bright future where anyone and everyone may enjoy delicious Girl Scout Cookies (TM).',
-      '  By connecting customers with Girl Scout Troops of their area, we will be able to ensure the enjoyment of cookies throughout the United States and eventually the world',
+      ce('h3',null,'We envision a bright future where anyone and everyone may enjoy delicious Girl Scout Cookies ™. By connecting customers with Girl Scout Troops of their area, we will be able to ensure the enjoyment of cookies throughout the United States and eventually the world'),
       ce('br'),
-      //Company History- NEEDS WORK
+      //Company History- 
       ce('h2',null,'Our History'),
       ce('br'),
-      'Founded in 1719 by a group of visionaries, we at _______ quickly expanded from our home in San Antonio into the surrounding areas of Central Texas.  Since then, the team as expanded rapidly and __________',
+      ce('h3',null,'Founded in 1719 by a group of visionaries, we at CyberCookies quickly expanded from our home in San Antonio into the surrounding areas of Central Texas.  Since then, the team has expanded rapidly and we look forward to a bright future.'),
       //Photos and descriptions for us
       ce('h2',null,'Who We Are'),
-      ce('img', {id: "employee_bios", src: employees, width: 800},null)
+      ce('img', {id: "employee_bios", src: employees, width: 1000},null)
     );
   }
 }
@@ -171,16 +172,16 @@ class CookieComponent extends React.Component {
   }
 
   render(){
-    return ce('div',{id:"cookies"},
-      ce('div',{id:"featured_cookies"},
+    return ce('div',{className:"cookies"},
+      ce('div',{className:"featured_cookies"},
         ce('h2', null, 'Featured Cookies:'),
-        ce('img', {src: thinmint, alt: "Thin Mint", width: 200},null),
-        ce('img', {src: tagalong, alt: "Tagalong", width: 200},null),
-        ce('img', {src: samoas, alt: "Samoas", width: 200},null),
-        ce('img', {src: smores, alt: "Smores", width: 200},null),
+        ce('img', {src: thinmint, alt: "Thin Mint", width: 400},null),
+        ce('img', {src: tagalong, alt: "Tagalong", width: 400},null),
+        ce('img', {src: samoas, alt: "Samoas", width: 400},null),
+        ce('img', {src: smores, alt: "Smores", width: 400},null),
         ce('br'),
         'Cookies shown above (left to right): Thin Mints, Tagalongs, Samoas, Smores'
-      ), ce('div',{id:"all_cookies"},
+      ), ce('div',{className:"all_cookies"},
         ce('h2', null, 'All Cookies:'),
         ce('ul', null,
           this.state.cookies.map((cookie_details,index) => ce('li', {key: index},ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),ce('p',null,cookie_details.split(',')[0])))
@@ -193,7 +194,7 @@ class CookieComponent extends React.Component {
 
   loadCookies(){
     console.log("getting cookies");
-    //fetch(getAllCookies).then(res=>res.json()).then(cookies => this.setState({cookies}));
+    fetch(getAllCookies).then(res=>res.json()).then(cookies => this.setState({cookies}));
     console.log(this.state.cookies);
   }
 }
@@ -205,7 +206,7 @@ class ContactComponent extends React.Component {
   }
 
   render(){
-    return ce('div', {id: "contact_us"},
+    return ce('div', {className: "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
       'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),

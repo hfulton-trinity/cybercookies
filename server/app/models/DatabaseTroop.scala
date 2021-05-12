@@ -47,6 +47,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
   }
 
   def getAvailableCookies(troopN: Int): Future[Seq[(SharedMessages.Cookie, Price, Quantity)]] = {
+    println(troopN)
     val cookiesFuture = db.run(
       (for {
         troop <- Troop if troop.number === troopN
@@ -57,7 +58,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       }).result
     )
 
-    cookiesFuture.map(_.map(tup => (SharedMessages.Cookie(tup._1.name, tup._1.description, tup._1.imageindex), tup._2.price, tup._2.quantity)))
+    cookiesFuture.map{seq => println(seq); seq.map(tup => (SharedMessages.Cookie(tup._1.name, tup._1.description, tup._1.imageindex), tup._2.price, tup._2.quantity))}
   }
 
   def logIn(troopN: Int, password: String): Future[Int] = {
@@ -110,19 +111,26 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
 
 
   def addCookies(troopN: Int, cookieId: Int, q: Quantity): Future[Int] = {
-    val cookies = db.run(Cookie.filter(c => c.id === cookieId).result)
-    cookies.flatMap(c => db.run(Cookie += CookieRow(-1, c.head.name, c.head.description, c.head.imageindex)))
-
-    val tIDtcID = db.run(
-      (for{
+    println(troopN + " " + cookieId + " " + q)
+    val quantity = db.run(
+      (for {
         troop <- Troop if troop.number === troopN
-        troopCookie <- TroopCookies if troopCookie.cookieId === cookieId && troopCookie.troopId == troop.id
+        troopCookie <- TroopCookies if troopCookie.cookieId.getOrElse(-1) === cookieId && troopCookie.troopId.getOrElse(-1) === troop.id
       } yield {
-        (troop.id, troopCookie.price)
-      }).result
+        troopCookie
+      }).result 
     )
 
-    tIDtcID.flatMap(tup => db.run(TroopCookies += TroopCookiesRow(-1, Some(tup.head._1), Some(cookieId), q, tup.head._2)))
+    quantity.flatMap { seq =>
+      if(seq.nonEmpty){
+        println(seq.head)
+        val newQuantity = seq.head.quantity + q
+        db.run(TroopCookies.filter(_.id === seq.head.id).update(seq.head.copy(quantity = newQuantity)))
+        
+        println("i got here")
+        Future(1)
+      } else Future(0)
+    }
   }
 
   def newCookie(troopN: Int, c: SharedMessages.Cookie, q: Quantity, p: Price): Future[Int] = {

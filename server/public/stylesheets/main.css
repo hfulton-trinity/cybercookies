@@ -1,0 +1,255 @@
+body{
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    text-decoration: none;
+}
+
+h2{
+    text-align: center;
+    color: greenyellow;
+    font-size: 100px;
+}
+
+.home_component h3{
+    text-align: center;
+    font-size: 50px;
+    color: aquamarine;
+}
+
+.home_component h5{
+    font-size: 30px;
+    color: aquamarine;
+}
+
+.cookie_bar {
+      background-color: lightgrey;
+      font-size: 25px;
+}
+  
+.navbar_home button{
+    padding: 10px 110px 10px;
+    text-align: center;
+    color: aquamarine;
+    background-color: darkslategrey;
+    font-size: 25px;
+}
+  
+.navbar_home button:hover{
+    background-color: darkslategrey;
+}
+  
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+  
+.menu {
+    position: absolute;
+    background-color: green;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+  
+.menu a{
+    padding: 12px 60px;
+    text-align: center;
+    font-size: 25px;
+    display: block;
+    color: black;
+    text-decoration: none;
+}
+
+.basebar_home {
+      background-color: lightgreen;
+      position: fixed;
+      bottom: 0;
+      text-align: right;
+}
+
+.basebar_home a{
+    padding: 15px;
+}
+  
+.menu a:hover {
+    background-color: lightgray;
+}
+
+.about_component h2{
+    color: aquamarine;
+    font-size: 50px;
+}
+
+.about_component h3{
+      color: white;
+      font-size: 30px;
+}
+
+.about_component img{
+      align-self: center;
+}
+
+.featured_cookies {
+      background-color: seashell;
+}
+
+.featured_cookies h2{
+      font-size: 50px;
+      color: black;
+}
+
+.all_cookies h2{
+    font-size: 50px;
+    color: aquamarine;
+}
+
+ul{
+      list-style-type:none;
+}
+
+.all_cookies li{
+      color:azure;
+      font-size: 30px;
+
+}
+
+.contact_us {
+      background-color: lightgreen;
+      align-content: center;
+}
+
+.contact_us h2{
+      color:black;
+      font-size: 50px;
+}
+
+.contact_us p{
+      color:black;
+}
+
+.contact_us button{
+      background-color: lightslategray;
+      color: white;
+}
+
+.troop_login h2{
+      color: aquamarine;
+      font-size: 50px;
+      text-align: left;
+}
+
+.troop_login{
+    color: snow;
+    font-size: 30px;
+}
+
+.order_details li{
+      font-size: 40px;
+      color:snow;
+}
+
+.out_stock_details li{
+    font-size: 40px;
+    color:snow;
+}  
+
+.stock_component h2{
+    font-size: 50px;
+}
+
+.Current_Stock{
+    background-color: slategray;
+}
+
+.Current_Stock li{
+    color: white;
+    font-size: 30px;
+}
+
+.Enter_Inventory {
+    background-color: slategray;
+}
+
+.Enter_Inventory p{
+    color: white;
+    font-size: 30px;
+}
+.bookkeeping{
+    display:flex;
+    flex:1;
+}
+
+main{
+    flex: 1;
+    padding: 0 20px;
+}
+
+aside{
+    flex: 0 0 130px;
+    padding: 0 20px;
+}
+
+.bookkeeping h2{
+    font-size: 50px;
+}
+
+.bookkeeping li {
+    color: white;
+    font-size: 30px;
+}
+
+.cust_loginpage h2{
+    color: aquamarine;
+    font-size: 50px;
+    text-align: left;
+}
+
+.cust_loginpage{
+  color: snow;
+  font-size: 30px;
+}
+
+.order h2{
+    font-size: 50px;
+}
+
+.order {
+    background-color: lightgray;
+    color: black;
+    font-size: 25px;
+}
+
+.checkout {
+    background-color: lightgreen;
+}
+
+.checkout h2{
+    font-size: 50px;
+    color: black;
+}
+
+.avail_cookies {
+    color:white;
+    font-size: 30px;
+}
+
+.cust_home h2{
+    font-size: 50px;
+}
+
+.delivery_details {
+    background-color:lightgreen;
+    color: black;
+    font-size: 25px;
+}
+
+.contact_troop {
+    background-color:lightgreen;
+    color: black;
+    font-size: 25px;
+}
+  
