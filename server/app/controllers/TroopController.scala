@@ -20,6 +20,7 @@ import shared.SharedMessages
 import shared.SharedMessages.Troop
 import java.sql.Date
 import shared.SharedMessages.Address
+import shared.SharedMessages.TroopData
 
 
 @Singleton
@@ -32,19 +33,20 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
   }
     
   implicit val userDataReads = Json.reads[UserData]
-  implicit val addressDataReads = Json.reads[SharedMessages.Address]
-  implicit val adressDataWrites = Json.writes[SharedMessages.Address]
-  implicit val cookieDataReads = Json.reads[SharedMessages.Cookie]
-  implicit val cookieDataWrites = Json.writes[SharedMessages.Cookie]
-  implicit val troopDataReads = Json.reads[SharedMessages.Troop]
-  implicit val troopDataWrites = Json.writes[SharedMessages.Troop]
-  implicit val transactionDataReads = Json.reads[SharedMessages.Transaction]
-  implicit val transactionDataWrites = Json.writes[SharedMessages.Transaction]
-  implicit val stockDataReads = Json.reads[SharedMessages.Stock]
-  implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
+    implicit val addressDataReads = Json.reads[SharedMessages.Address]
+      implicit val adressDataWrites = Json.writes[SharedMessages.Address]
+       implicit val cookieDataReads = Json.reads[SharedMessages.Cookie]
+      implicit val cookieDataWrites = Json.writes[SharedMessages.Cookie]
+       implicit val troopDataReads = Json.reads[SharedMessages.Troop]
+      implicit val troopDataWrites = Json.writes[SharedMessages.Troop]
+       implicit val transactionDataReads = Json.reads[SharedMessages.Transaction]
+      implicit val transactionDataWrites = Json.writes[SharedMessages.Transaction]
+       implicit val stockDataReads = Json.reads[SharedMessages.Stock]
+      implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
+      implicit val troopDataReads2=Json.reads[SharedMessages.TroopData] 
 
 
-// implicit val messageReads=Json.reads[MessageOut]
+  // implicit val messageReads=Json.reads[MessageOut]
 // implicit val messageWrites=Json.writes[MessageData]
 // implicit val taskItemWrites = Json.writes[TaskItem]
 
@@ -69,7 +71,7 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
     withJsonBody[UserData] { ud =>
       model.logIn(ud.username.toInt,ud.password).map { ouserId =>
         ouserId match {
-          case true => 
+          case true => //todo fix
             Ok(Json.toJson(true))
              .withSession("username" -> ud.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
           case false =>
@@ -79,24 +81,22 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
     }
   }
 
-  def createTroop = TODO
 
-// def createTroop = Action { implicit request =>
-//   //val some:Option[Int]=Some(15)
-//   //val x=some.getOrElse(15)
-//     withJsonBody[TroopData] { ud => 
-//     //model.newTroop(Troop(ud.username, Address(ud.address, ud.city, ud.state, ud.country, ud.zip, ud.apartment), ud.password, new Date(2021, 5, 25), ud.email)).map {ouserId =>// returns a Boolean
-//       model.newTroop(Troop(ud.username.toInt, Address(ud.address, ud.city, ud.state, ud.country, ud.zip, Some(15)), ud.password, new Date(2021, 5, 25), ud.email)).map {ouserId =>// returns a Boolean
-//         ouserId match {
-//           case true => 
-//             Ok(Json.toJson(true))
-//              .withSession("username" -> ud.n.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-//           case false =>
-//             Ok(Json.toJson(false))
-//         }
-//     }
-// }}
-
+def createTroop = Action { implicit request =>
+  //val some:Option[Int]=Some(15)
+  //val x=some.getOrElse(15)
+    withJsonBody[TroopData] { ud => 
+      model.newTroop(Troop(ud.username.toInt, Address(ud.address(0), ud.address(1), ud.address(2), "USA", ud.address(3).toInt, Some(15)), ud.password, new Date(2021, 5, 25), ud.email)).map {ouserId =>// returns a Boolean
+        ouserId match {
+          case true => 
+            Ok(Json.toJson(true))
+             .withSession("username" -> ud.username.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+          case false =>
+            Ok(Json.toJson(false))
+        }
+    }
+}}
+ def addcookies=TODO
   def allOrders= TODO
 
 
