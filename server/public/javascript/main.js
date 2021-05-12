@@ -205,7 +205,7 @@ class ContactComponent extends React.Component {
   }
 
   render(){
-    return ce('form', {id: "contact_us"},
+    return ce('div', {id: "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
       'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),

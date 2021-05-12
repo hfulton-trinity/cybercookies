@@ -13,7 +13,7 @@ const delivery_estimate = document.getElementById("getEstimatedDeliveryRoute").v
 class CustomerMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: false, cart: []};
+    this.state = {page: "H", loggedIn: true, cart: []};
     this.handlePageChange = this.handlePageChange.bind(this);
     this.handleCartChange = this.handleCartChange.bind(this);
   }
@@ -38,7 +38,7 @@ class CustomerMainComponent extends React.Component {
         case _: return ce('p',null,'FAIL');
       }
     } else {
-      return ce('div', null, ce(LoginCustComponent, {doLogin: () => this.setState({loggedIn: true})}));
+      return ce('div', null, ce(LoginCustComponent, {doLogin: () => this.setState({loggedIn: false})}));
     }
   }
 
@@ -162,7 +162,7 @@ class ContactComponent extends React.Component {
   }
 
   render(){
-    return ce('form', {id: "contact_us"},
+    return ce('div', {id: "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'We would love to hear from you! Our typical response time is <never>'),
       'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),
@@ -236,6 +236,7 @@ class OrderComponent extends React.Component {
   }
 
   render(){
+    console.log(this.state.cookies);
     return ce('div', null,
       'Search for cookies: ', ce('input',{type: "text", value: this.state.search, onChange: e => this.typingHandler(e)}),
       ce('button',{onClick: e => this.search(e)},'Search'),
@@ -243,7 +244,14 @@ class OrderComponent extends React.Component {
       //quantity input, add to cart button
       ce('div', {id: "avail_cookies"},
         ce('ul', null,
-          this.state.cookies.map((cookie_details,index) => ce('li', {key: index},ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),ce('p', null, cookie_details.split(',')[0])),ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),ce('button',{id: cookie_details.split(',')[0], onClick: e => this.cartUpdate(e)},'Add to Cart')))
+          this.state.cookies.map((cookie_details,index) => 
+            ce('li', {key: index}, 
+              ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200}, null),
+              ce('p', null, cookie_details.split(',')[0]),
+              ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),
+              ce('button',{id: cookie_details.split(',')[0], onClick: e => this.cartUpdate(e)},'Add to Cart')
+            )
+          )
         )
       )
     );

@@ -157,19 +157,17 @@ class LoginTroopComponent extends React.Component {
     });
   }
   makeUser() {
-    const n= this.state.new_username;
-    const address= [this.state.new_addy,this.state.new_city,this.state.new_state,this.state.new_zip];
-    const password=this.state.password;
+    const n = parseInt(this.state.new_username);
+    const address = [this.state.new_addy,this.state.new_city,this.state.new_state,this.state.new_zip];
+    const password = this.state.new_password;
+    console.log(password);
     const next_restock="2021-05-26";
-    const email=this.state.email;
+    const email = this.state.email;
     fetch(addTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken,'Accept':'application/json'},
-        body: JSON.stringify({"n": n, "address": address , "password": password, "next_restock": next_restock, "email": email })
-    }).then(res =>{
-      console.log(res);
-     // console.log(res.json())
-     console.log(res.json());}).then(data => {
+        body: JSON.stringify({"username": n, "address": address , "password": password, "date": next_restock, "email": email })
+    }).then(res => res.json()).then(data => {
        console.log(data);
       if(data) {
         this.props.doLogin();
@@ -187,7 +185,7 @@ class ContactComponent extends React.Component {
   }
 
   render(){
-    return ce('form', {id: "contact_us"},
+    return ce('div', {id: "contact_us"},
       ce('h2',null,'Contact Us'),
       ce('p',null,'For general suggestions only.  For technical problems, idk figure it out.  Our typical response time is <never>!'),
       'Name:',ce('input',{type: "text",  id: "name",value: this.state.name, onChange: e => this.typingHandler(e)}),
@@ -201,6 +199,7 @@ class ContactComponent extends React.Component {
     console.log("lol you thought");
     this.setState({name: "", email: "", message: ""});
   }
+
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
    
@@ -236,9 +235,11 @@ class HomeComponent extends React.Component {
 
   loadOrders(){
 
-    fetch(allOrders).then(res=>{console.log(res);res.json();}).then(orders=>{
+    fetch(allOrders).then(res=>{console.log(res);
+      return res.json();}).then(orders=>{
       this.setState({orders});});
-    fetch(OutStock).then(res=>{console.log(res);res.json();}).then(out=>{
+    fetch(OutStock).then(res=>{console.log(res);
+      return res.json();}).then(out=>{
       this.setState({out});
     });
   }
@@ -281,11 +282,11 @@ class StockComponent extends React.Component {
     fetch(addStock, { 
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken },
-      body: JSON.stringify({cookie:this.state.new_cookie,amount:this.state.new_amount})
+      body: JSON.stringify({cookie:this.state.new_cookie, amount:this.state.new_amount})
     }).then(res => res.json()).then(data => {
       if(data) {
-        this.loadTasks();
-        this.setState({ errorMessage: "", newMessage: "" ,newUser:""});
+        //this.loadTasks();
+        this.setState({ errorMessage: "", newMessage: "", newUser:""});
       } else {
         this.setState({ errorMessage: "Failed to add." });
       }

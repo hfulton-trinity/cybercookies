@@ -48,17 +48,23 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     request.body.asJson.map { body =>
       Json.fromJson[A](body) match {
         case JsSuccess(a,path) => f(a)
-        case e @ JsError(_) => Future.successful(Redirect(routes.CustController.load()))
+        case e @ JsError(_) => 
+          println(e)
+          Future.successful(Redirect(routes.CustController.load()))
       }
     }.getOrElse(Future.successful(Redirect(routes.CustController.load())))
 
   }
 
   def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
-    request.session.get("username").map(f).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
+    request.session.get("username").map(f).getOrElse{
+      println("user not found in session")
+      Future.successful(Ok(Json.toJson(Seq.empty[String])))
+    }
   }
 
   def validateCustomer = Action.async { implicit request =>
+    println("validate")
     withJsonBody[UserData] {ud =>
       model.validateUser(ud.username, ud.password).map {userExists =>
         if (userExists) {
@@ -72,6 +78,7 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def newCustomer = Action.async { implicit request =>
+    println("newCustomer")
     withJsonBody[NewUserData] {ud =>
       model.newUser(SharedMessages.User(ud.user, ud.pass, ud.email, ud.name, ud.troop)).map { userExists =>
         if(userExists > 0) {
@@ -85,7 +92,9 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def getTroopEmail = Action.async { implicit request =>
+    println("getemail")
     withSessionUsername{ username =>
+
       val user = model.getUserInfo(username)
       val troop_email = user.flatMap {u =>
         troop_model.getTroopInformationNoPassword(u.troop_to_buy_from).map(t => t.email)
@@ -95,6 +104,7 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def getNextDelivery = Action.async { implicit request =>
+    println("getnextdelivery")
     withSessionUsername{ username =>
       val transactFut = model.myTransactions(username)
       val transaction = transactFut.map { t =>  
@@ -113,6 +123,7 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def getEstimatedDelivery = Action.async { implicit request =>
+    println("getestimated")
     Future.successful(Ok(Json.toJson(false)))//""+Calendar.get(Calendar.MONTH)+"/"+Calendar.get(Calendar.DAY_OF_MONTH)+"/"+Calendar.get(Calendar.YEAR)))
     //+2wks??
 
@@ -120,7 +131,9 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def getAvailCookies = Action.async { implicit request =>
+    println("getavailablecookies")
     withSessionUsername{ username =>
+      println(username)
       val getUserInfo = model.getUserInfo(username)
       getUserInfo.flatMap { ui =>
         val availCookies = troop_model.getAvailableCookies(ui.troop_to_buy_from)
@@ -134,10 +147,12 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def sendTransaction = Action.async { implicit request =>
+    println("sendtrans")
     Future.successful(Ok(Json.toJson(false))) //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
   }
 
   def logout = Action.async { implicit request =>
+    println("logout")
     Future.successful(Ok(Json.toJson(true)).withSession(request.session - "username"))
   }
 

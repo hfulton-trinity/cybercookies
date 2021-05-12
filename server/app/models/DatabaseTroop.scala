@@ -16,7 +16,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       db.run(
         (for {
           troopRow <- Troop if troopRow.number === t.n && troopRow.password === t.password
-          address <- Address if address.id === troopRow.addressId.get
+          address <- Address if address.id === troopRow.addressId.getOrElse(-1)
         } yield {
           (address, troopRow)
         }).result
@@ -34,7 +34,8 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
             address.id
           }).result)
 
-        troopRowFut.flatMap(seq => db.run(Troop += TroopRow(-1, t.n, Some(seq.head), t.password, t.next_restock, t.email)))
+        val i = troopRowFut.flatMap(seq => db.run(Troop += TroopRow(-1, t.n, Some(seq.head), t.password, t.next_restock, t.email)))
+        i.map{s => println(s); s}
       } else {
         Future(0)
       }
@@ -61,7 +62,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       db.run(
         (for {
           troopRow <- Troop if troopRow.number === troopN && troopRow.password === password
-          address <- Address if address.id === troopRow.addressId.get
+          address <- Address if address.id === troopRow.addressId.getOrElse(-1)
         } yield {
           (address, troopRow)
         }).result
@@ -74,7 +75,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       db.run(
         (for {
           troopRow <- Troop if troopRow.number === troopN && troopRow.password === password
-          address <- Address if address.id === troopRow.addressId.get
+          address <- Address if address.id === troopRow.addressId.getOrElse(-1)
         } yield {
           (address, troopRow)
         }).result
@@ -91,7 +92,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       db.run(
         (for {
           troopRow <- Troop if troopRow.number === troopN
-          address <- Address if address.id === troopRow.addressId.get
+          address <- Address if address.id === troopRow.addressId.getOrElse(-1)
         } yield {
           (address, troopRow)
         }).result
@@ -152,7 +153,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       db.run(
         (for {
           troopRow <- Troop
-          address <- Address if address.id === troopRow.addressId.get
+          address <- Address if address.id === troopRow.addressId.getOrElse(-1)
         } yield {
           (address, troopRow)
         }).result
@@ -174,12 +175,12 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       db.run(
         (for {
           troopCookie <- TroopCookies if troopCookie.quantity === 0
-          cookie <- Cookie if troopCookie.cookieId.get === cookie.id
+          cookie <- Cookie if troopCookie.cookieId.getOrElse(-1) === cookie.id
         } yield {
           cookie
         }).result
       )
       
-    allTroops.map(seq => seq.map(cR => SharedMessages.Cookie(cR.name, cR.description, cR.imageindex)))
+    allTroops.map{seq => println(seq); seq.map(cR => SharedMessages.Cookie(cR.name, cR.description, cR.imageindex))}
   }
 }

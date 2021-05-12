@@ -21,7 +21,7 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
 
   def logIn(u: Username, p: Password): Future[SharedMessages.User] = {
     val matches = db.run(Users.filter(userRow => userRow.username === u && userRow.password === p).result)
-    matches.map(uRow => SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.get))
+    matches.map(uRow => SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.getOrElse(-1)))
   }
 
   def validateUser(u: Username, p: Password): Future[Boolean] = {
@@ -32,7 +32,7 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
   def getUserInfo(u: Username): Future[SharedMessages.User] = {
     val matches = db.run(Users.filter(userRow => userRow.username === u).result)
     matches.map {uRow => 
-      if(uRow.nonEmpty) SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.get)
+      if(uRow.nonEmpty) SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.getOrElse(-1))
       else null
     }
   }
@@ -52,7 +52,7 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
 
     val tranIDcID = l.map(c => db.run(
       (for {
-        trans <- Transaction if trans.customerId.get === t.customer
+        trans <- Transaction if trans.customerId.getOrElse(-1) === t.customer
         cookie <- Cookie if cookie.name === c._1.name
       } yield {
         (trans.id, cookie.id, c._2, c._3)
@@ -68,15 +68,15 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
     val myTrans = db.run(
       (for{
         user <- Users if user.username === u
-        trans <- Transaction if trans.customerId.get === user.id
-        address <- Address if address.id === trans.addressId.get
+        trans <- Transaction if trans.customerId.getOrElse(-1) === user.id
+        address <- Address if address.id === trans.addressId.getOrElse(-1)
       } yield {
         (trans, address)
       }).result
     )
 
-    myTrans.map(_.map(tup => SharedMessages.Transaction(tup._1.customerId.get, tup._1.sellerId.get, tup._1.deliveryMethod, 
-      tup._1.deliveryInstructions.get, 
+    myTrans.map(_.map(tup => SharedMessages.Transaction(tup._1.customerId.getOrElse(-1), tup._1.sellerId.getOrElse(-1), tup._1.deliveryMethod, 
+      tup._1.deliveryInstructions.getOrElse(""), 
       SharedMessages.Address(tup._2.streetAddress, tup._2.city, tup._2.state, tup._2.country, tup._2.zip, tup._2.apartmentNumber), 
       tup._1.dateOrdered)))
   }
@@ -85,24 +85,24 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
     val myOrders = db.run(
       (for{
         troop <- Troop if troop.number === tn
-        transaction <- Transaction if transaction.sellerId.get === troop.id
-        address <- Address if address.id === transaction.addressId.get
+        transaction <- Transaction if transaction.sellerId.getOrElse(-1) === troop.id
+        address <- Address if address.id === transaction.addressId.getOrElse(-1)
       } yield {
         (transaction, address)
       }).result
     )
 
-    myOrders.map(_.map(tup => SharedMessages.Transaction(tup._1.customerId.get, tup._1.sellerId.get, tup._1.deliveryMethod, 
-      tup._1.deliveryInstructions.get, 
+    myOrders.map{seq => println(seq); seq.map(tup => SharedMessages.Transaction(tup._1.customerId.getOrElse(-1), tup._1.sellerId.getOrElse(-1), tup._1.deliveryMethod, 
+      tup._1.deliveryInstructions.getOrElse(""), 
       SharedMessages.Address(tup._2.streetAddress, tup._2.city, tup._2.state, tup._2.country, tup._2.zip, tup._2.apartmentNumber), 
-      tup._1.dateOrdered)))
+      tup._1.dateOrdered))}
   }
 
   def totalSold: Future[Seq[(SharedMessages.Cookie, Int, Double)]] = {
     val transCookies = db.run(
       (for {
         tc <- TransactionCookie
-        cookie <- Cookie if tc.cookieId.get === cookie.id
+        cookie <- Cookie if tc.cookieId.getOrElse(-1) === cookie.id
       } yield {
         (cookie, tc.quantity, tc.price)
       }).result
