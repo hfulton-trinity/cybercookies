@@ -161,7 +161,7 @@ class LoginTroopComponent extends React.Component {
     const address= [this.state.new_addy,this.state.new_city,this.state.new_state,this.state.new_zip];
     const password=this.state.password;
     const next_restock="2021-05-26";
-    const email=thist.state.email;
+    const email=this.state.email;
     fetch(addTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
