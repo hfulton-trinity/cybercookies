@@ -14,7 +14,7 @@ const csrfToken = document.getElementById("csrfToken").value;
 class TroopMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: true};
+    this.state = {page: "H", loggedIn: false};
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
@@ -144,7 +144,7 @@ class LoginTroopComponent extends React.Component {
   login(e) {
     const n = this.state.username;
     const password = this.state.password;
-    fetch(ValidateTroop, {
+    fetch(validateTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
         body: JSON.stringify({n, password})
@@ -189,10 +189,14 @@ class ContactComponent extends React.Component {
       'Name:',ce('input',{type: "text",  id: "name",value: this.state.name, onChange: e => this.typingHandler(e)}),
       ce('br'),'Email:',ce('input',{type: "text", id:"email", value: this.state.email, onChange: e => this.typingHandler(e)}),
       ce('br'),'Comments:',ce('input',{type: "text",id:"message", value: this.state.message, onChange: e => this.typingHandler(e)}),
-      ce('br'), ce('button', null, 'Send')
+      ce('br'), ce('button', {onClick:e=>this.doNothing()}, 'Send')
     );
   }
 
+  doNothing(){
+    console.log("lol you thought");
+    this.setState({name: "", email: "", message: ""});
+  }
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
    
