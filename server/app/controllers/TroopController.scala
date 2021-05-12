@@ -24,34 +24,31 @@ import shared.SharedMessages.Address
 
 @Singleton
 class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
+  private val model= new DatabaseTroop(db)  
+  private val UModel= new DatabaseUser(db)
 
-
-
-
-private val model= new DatabaseTroop(db)  
-private val UModel= new DatabaseUser(db)
-    def load=Action{implicit request=>
-        Ok(views.html.troop())
-      }
+  def load=Action{implicit request=>
+    Ok(views.html.troop())
+  }
     
   implicit val userDataReads = Json.reads[UserData]
-    implicit val addressDataReads = Json.reads[SharedMessages.Address]
-      implicit val adressDataWrites = Json.writes[SharedMessages.Address]
-       implicit val cookieDataReads = Json.reads[SharedMessages.Cookie]
-      implicit val cookieDataWrites = Json.writes[SharedMessages.Cookie]
-       implicit val troopDataReads = Json.reads[SharedMessages.Troop]
-      implicit val troopDataWrites = Json.writes[SharedMessages.Troop]
-       implicit val transactionDataReads = Json.reads[SharedMessages.Transaction]
-      implicit val transactionDataWrites = Json.writes[SharedMessages.Transaction]
-       implicit val stockDataReads = Json.reads[SharedMessages.Stock]
-      implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
+  implicit val addressDataReads = Json.reads[SharedMessages.Address]
+  implicit val adressDataWrites = Json.writes[SharedMessages.Address]
+  implicit val cookieDataReads = Json.reads[SharedMessages.Cookie]
+  implicit val cookieDataWrites = Json.writes[SharedMessages.Cookie]
+  implicit val troopDataReads = Json.reads[SharedMessages.Troop]
+  implicit val troopDataWrites = Json.writes[SharedMessages.Troop]
+  implicit val transactionDataReads = Json.reads[SharedMessages.Transaction]
+  implicit val transactionDataWrites = Json.writes[SharedMessages.Transaction]
+  implicit val stockDataReads = Json.reads[SharedMessages.Stock]
+  implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
 
 
-  // implicit val messageReads=Json.reads[MessageOut]
+// implicit val messageReads=Json.reads[MessageOut]
 // implicit val messageWrites=Json.writes[MessageData]
 // implicit val taskItemWrites = Json.writes[TaskItem]
 
-    def withJsonBody[A](f: A => Future[Result])(implicit request: Request[AnyContent], reads: Reads[A]): Future[Result] = {
+  def withJsonBody[A](f: A => Future[Result])(implicit request: Request[AnyContent], reads: Reads[A]): Future[Result] = {
     request.body.asJson.map { body =>
       Json.fromJson[A](body) match {
         case JsSuccess(a, path) => f(a)
@@ -60,14 +57,15 @@ private val UModel= new DatabaseUser(db)
     }.getOrElse(Future.successful(Redirect(routes.TroopController.load())))
   }
 
-     def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+  def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     request.session.get("username").map(f).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
-      def withSessionUserid(f: Int => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+
+  def withSessionUserid(f: Int => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     request.session.get("userid").map(userid => f(userid.toInt)).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
 
-def validate  = Action.async { implicit request =>
+  def validate = Action.async { implicit request =>
     withJsonBody[UserData] { ud =>
       model.logIn(ud.username.toInt,ud.password).map { ouserId =>
         ouserId match {
@@ -80,7 +78,8 @@ def validate  = Action.async { implicit request =>
       }
     }
   }
-  def createTroop=TODO
+
+  def createTroop = TODO
 
 // def createTroop = Action { implicit request =>
 //   //val some:Option[Int]=Some(15)
@@ -98,10 +97,10 @@ def validate  = Action.async { implicit request =>
 //     }
 // }}
 
-def allOrders= TODO
+  def allOrders= TODO
 
 
-def outStock= TODO
+  def outStock= TODO
 
   def allStock = TODO
 
