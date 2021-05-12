@@ -4,16 +4,18 @@ const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
 const logInCust = document.getElementById("custLoginRoute").value;
 const addCust = document.getElementById("newCustRoute").value;
-//const sendTransact = document.getElementById("transactionRoute").value;
+const sendTransact = document.getElementById("transactionRoute").value;
 const getTroopEmail = document.getElementById("troopEmailRoute").value;
 const getNextDelivery = document.getElementById("getNextDeliveryRoute").value;
 const getAvailCookies = document.getElementById("getAvailCookiesRoute").value;
+const delivery_estimate = document.getElementById("getEstimatedDeliveryRoute").value;
 
 class CustomerMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: false};
+    this.state = {page: "H", loggedIn: false, cart: []};
     this.handlePageChange = this.handlePageChange.bind(this);
+    this.handleCartChange = this.handleCartChange.bind(this);
   }
 
   handlePageChange(page){
@@ -21,14 +23,18 @@ class CustomerMainComponent extends React.Component {
     this.setState({page});
   }
 
+  handleCartChange(cookie, quantity){
+    this.setState({cart: cart.append(cookie + "Quantity desired: "+ quantity)});
+  }
+
   render(){
     if(!this.state.loggedIn){
       console.log(this.state.page);
       switch(this.state.page) {
-        case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(HomeComponent));
-        case "Order": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(OrderComponent));
-        case "Cart": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(CartComponent));
-        case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(ContactComponent));
+        case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(HomeComponent));
+        case "Order": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(OrderComponent, {changeCart: this.handleCartChange}));
+        case "Cart": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(CartComponent));
+        case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(ContactComponent));
         case _: return ce('p',null,'FAIL');
       }
     } else {
@@ -222,6 +228,7 @@ class OrderComponent extends React.Component {
       cookies: [],
       quantity: 0
     };
+    this.cartUpdate = this.cartUpdate.bind(this);
   }
 
   componentDidMount(){
@@ -236,7 +243,7 @@ class OrderComponent extends React.Component {
       //quantity input, add to cart button
       ce('div', {id: "avail_cookies"},
         ce('ul', null,
-          this.state.cookies.map((cookie_details,index) => ce('li', {key: index}, ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null), ce('p', null, cookie_details.split(',')[0]),ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),ce('button',{onClick: e => this.cartUpdate(e)},'Add to Cart')))
+          this.state.cookies.map((cookie_details,index) => ce('li', {key: index},ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),ce('p', null, cookie_details.split(',')[0])),ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),ce('button',{id: cookie_details.split(',')[0], onClick: e => this.cartUpdate(e)},'Add to Cart')))
         )
       )
     );
@@ -248,11 +255,12 @@ class OrderComponent extends React.Component {
 
   search(e){
     //filter
-    this.setState({cookies: cookies.filter(x => x.contains(this.state.search))})
+    this.setState({cookies: cookies.filter(x => x.contains(this.state.search))});
   }
 
   cartUpdate(e){
     //update cart with additions
+    this.props.changeCart(e.target['id'],quantity);
   }
 
   typingHandler(e) {
@@ -275,8 +283,18 @@ class CartComponent extends React.Component {
       crv: "",
       exp: "",
       orderStatus: "",
-      orders: []
+      orders: [],
+      est_date: ""
     };
+  }
+
+  componentDidMount(){
+    this.setState({orders: this.props.cart});
+    this.loadDeliveryDate();
+  }
+
+  loadDeliveryDate(){
+    fetch(delivery_estimate).then(res=>res.json()).then(date => this.setState({est_date: date}));
   }
 
   render(){
@@ -284,7 +302,7 @@ class CartComponent extends React.Component {
       ce('div', {id: "order"},
         ce('h2', null, 'Current Order'),
         ce('ul', null,
-          //this.state.orders.map((...) => ce('li', {key: ...}, ...))
+          this.state.orders.map((cookie,index) => ce('li', {key: index}, cookie))
         )
       ), ce('aside',{id: "checkout"},
         'Shipping Address:', ce('br'),
@@ -294,8 +312,8 @@ class CartComponent extends React.Component {
         'State: ', ce('input',{type: "text", value: this.state.state, onChange: e => this.typingHandler(e)}), ce('br'),
         'Country: ', ce('input',{type: "text", value: this.state.country, onChange: e => this.typingHandler(e)}), ce('br'),
         'Zip Code: ', ce('input',{type: "number", value: this.state.zip, onChange: e => this.typingHandler(e)}), ce('br'),
-        'Estimated Time/Date of Delivery:', ce('br'),
-        //Date and time Here
+        'Estimated Date of Delivery:', ce('br'),
+        ce('p',null,est_date), ce('br'),
         'Payment Info: (This is super duper secure so please use real card info)', ce('br'),
         'Card No.: ', ce('input',{type: "text", value: this.state.card_no, onChange: e => this.typingHandler(e)}),
         ce('br'),
@@ -308,24 +326,21 @@ class CartComponent extends React.Component {
   }
 
   sendTransaction() {
-    //how best to send??
-    /*const address = [this.state.street, this.state.city, this.state.state, this.state.zip, this.state.apt_no];
+    const address = [this.state.street, this.state.city, this.state.state, this.state.zip, this.state.apt_no];
+    const cookies = orders;
 
     fetch(sendTransact, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
-        body: JSON.stringify({"address": address})
+        body: JSON.stringify({"address": address, "cookies": cookies})
     }).then(res => res.json()).then(data => {
       if(data) {
         this.props.doLogin();
       } else {
         this.setState({orderStatus: "Order failed. Please try again."});
       }
-    });*/
+    });
   }
-
-  //Transaction(customer: String, seller: Int, deliveryMethod: String, deliveryInstructions: String, address: Address, date_ordered: Date)
-  //most of this grabbed in controller?
 }
 
 
