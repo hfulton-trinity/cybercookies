@@ -12,4 +12,5 @@ object SharedMessages {
   case class Transaction(customer: Int, seller: Int, deliveryMethod: String, deliveryInstructions: String, address: Address, date_ordered: Date)
   case class Stock(cookie:Int,num:Int)
   case class TroopData(username:Int,address: Array[String],password:String,date:String,email:String)
+  case class Troop2(username:Int,password:String)
 }

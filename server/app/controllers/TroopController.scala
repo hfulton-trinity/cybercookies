@@ -22,6 +22,7 @@ import java.sql.Date
 import shared.SharedMessages.Address
 import shared.SharedMessages.TroopData
 import shared.SharedMessages.Stock
+import shared.SharedMessages.Troop2
 
 
 @Singleton
@@ -46,6 +47,7 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
       implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
       implicit val troopDataReads2=Json.reads[SharedMessages.TroopData] 
       implicit val allorderswrites=Json.writes[(SharedMessages.Cookie,Int,Double)]
+      implicit val troop2reads=Json.reads[Troop2]
 
 
   // implicit val messageReads=Json.reads[MessageOut]
@@ -56,7 +58,9 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
     request.body.asJson.map { body =>
       Json.fromJson[A](body) match {
         case JsSuccess(a, path) => f(a)
-        case e @ JsError(_) => Future.successful(Redirect(routes.TroopController.load()))
+        case e @ JsError(_) =>
+        println(e)
+        Future.successful(Redirect(routes.TroopController.load()))
       }
     }.getOrElse(Future.successful(Redirect(routes.TroopController.load())))
   }
@@ -64,14 +68,21 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
   def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     request.session.get("username").map(f).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
-
-  def withSessionUserid(f: Int => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+      def withSessionUserid(f: Int => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     request.session.get("userid").map(userid => f(userid.toInt)).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
 
+  // def validate = Action { implicit request =>
+    
+  //     Ok(Json.toJson(true)).withSession("username" -> "1", "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+    
+  // }
   def validate = Action.async { implicit request =>
-    withJsonBody[UserData] { ud =>
-      model.logIn(ud.username.toInt,ud.password).map { ouserId =>
+    println("validating")
+    withJsonBody[Troop2] { ud =>
+      println(ud)
+      model.logIn(ud.username,ud.password).map { ouserId =>
+        println(ouserId)
         if( ouserId>0){
           Ok(Json.toJson(true))
               .withSession("username" -> ud.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))

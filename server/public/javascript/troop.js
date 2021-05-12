@@ -142,12 +142,12 @@ class LoginTroopComponent extends React.Component {
 
 //get troop information
   login(e) {
-    const n = this.state.username;
+    const username = parseInt(this.state.username);
     const password = this.state.password;
     fetch(validateTroop, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
-        body: JSON.stringify({n, password})
+        body: JSON.stringify({username, password})
     }).then(res => res.json()).then(data => {
       if(data) {
         this.props.doLogin();
@@ -236,9 +236,9 @@ class HomeComponent extends React.Component {
 
   loadOrders(){
 
-    fetch(allOrders).then(res=>res.json()).then(orders=>{
+    fetch(allOrders).then(res=>{console.log(res);res.json();}).then(orders=>{
       this.setState({orders});});
-    fetch(OutStock).then(res=>res.json()).then(out=>{
+    fetch(OutStock).then(res=>{console.log(res);res.json();}).then(out=>{
       this.setState({out});
     });
   }

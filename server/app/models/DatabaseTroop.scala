@@ -56,6 +56,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
   }
 
   def logIn(troopN: Int, password: String): Future[Int] = {
+    println(troopN,password)
     val addyTroopRow =
       db.run(
         (for {
@@ -65,8 +66,7 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
           (address, troopRow)
         }).result
       )
-    
-    addyTroopRow.map(_.length)
+    addyTroopRow.map{out=>println(out);out.length}
   }
 
   def getTroopInformation(troopN: Int, password: String): Future[SharedMessages.Troop] = {
