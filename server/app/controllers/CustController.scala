@@ -24,12 +24,13 @@ import scala.concurrent.Future
 @Singleton
 class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, cc: ControllerComponents) (implicit ec: ExecutionContext) 
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
-//a
+
   private val model = new DatabaseUser(db)
   private val troop_model = new DatabaseTroop(db)
+
   private val date: Calendar = Calendar.getInstance()
 
-  def load = Action{ implicit request =>
+  def load = Action{ implicit request =>    
     Ok(views.html.cust())
   }
 
