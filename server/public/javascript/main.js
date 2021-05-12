@@ -162,7 +162,7 @@ class CookieComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      cookies: []
+      cookies: ["Thin Mint: a thin mint cookie,0"]
     };
   }
 
@@ -181,20 +181,20 @@ class CookieComponent extends React.Component {
         ce('br'),
         'Cookies shown above (left to right): Thin Mints, Tagalongs, Samoas, Smores'
       ), ce('div',{id:"all_cookies"},
+        ce('h2', null, 'All Cookies:'),
         ce('ul', null,
-          this.state.cookies.map((cookie_details,index) => {
-            ce('li', {key: index},
-              ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),
-              ce('p',null,cookie_details.split(',')[0])
-            )
-          })
+          this.state.cookies.map((cookie_details,index) => ce('li', {key: index},ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),ce('p',null,cookie_details.split(',')[0])))
+            //)
+          //)
         )
       )
     );
   }
 
   loadCookies(){
-    fetch(getAllCookies).then(res=>res.json()).then(cookies => this.setState({cookies}));
+    console.log("getting cookies");
+    //fetch(getAllCookies).then(res=>res.json()).then(cookies => this.setState({cookies}));
+    console.log(this.state.cookies);
   }
 }
 
@@ -211,13 +211,17 @@ class ContactComponent extends React.Component {
       'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),
       ce('br'),'Email:',ce('input',{type: "text", id: "email", value: this.state.email, onChange: e => this.typingHandler(e)}),
       ce('br'),'Comments:',ce('input',{type: "text", id: "message", value: this.state.message, onChange: e => this.typingHandler(e)}),
-      ce('br'), ce('button', null, 'Send')
+      ce('br'), ce('button', {onClick: e => this.contact(e)}, 'Send')
     );
   }
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
     console.log([e.target['id']]);
+  }
+
+  contact(e) {
+    this.setState({name: "", email: "", message: ""});
   }
 }
 

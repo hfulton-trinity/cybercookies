@@ -9,6 +9,14 @@ GET        /customer                     controllers.CustController.load
 GET        /troop                        controllers.TroopController.load
 POST       /validateCustomer             controllers.CustController.validateCustomer
 POST       /createCustomer               controllers.CustController.newCustomer
+GET        /getNextDelivery              controllers.CustController.getNextDelivery
+GET        /troopemail                   controllers.CustController.getTroopEmail
+GET        /getNextDelivery              controllers.CustController.getNextDelivery
+GET        /estDelivery                  controllers.CustController.getEstimatedDelivery
+GET        /getAvailCookies              controllers.CustController.getAvailCookies
+POST        /transact                    controllers.CustController.sendTransaction
+GET         /logout                      controllers.CustController.logout
+
 
 
 #Troop page

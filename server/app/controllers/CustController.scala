@@ -90,7 +90,7 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
   }
 
   def getEstimatedDelivery = Action { implicit request =>
-    Ok(Json.toJson(""+Calendar.get(Calendar.MONTH)+"/"+Calendar.get(Calendar.DAY_OF_MONTH)+"/"+Calendar.get(Calendar.YEAR)))
+    Ok(Json.toJson(false))//""+Calendar.get(Calendar.MONTH)+"/"+Calendar.get(Calendar.DAY_OF_MONTH)+"/"+Calendar.get(Calendar.YEAR)))
     //+2wks??
 
     //need estimated delivery date as string
@@ -104,7 +104,9 @@ class CustController @Inject()(cc: ControllerComponents) extends AbstractControl
     }
   }
 
-  def sendTransaction = ??? //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
+  def sendTransaction = Action { implicit request =>
+    Ok(Json.toJson(false)) //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
+  }
 
   def logout = Action { implicit request =>
     Ok(Json.toJson(true)).withSession(request.session - "username")

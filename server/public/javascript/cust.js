@@ -4,9 +4,9 @@ const ce = React.createElement;
 const csrfToken = document.getElementById("csrfToken").value;
 const logInCust = document.getElementById("custLoginRoute").value;
 const addCust = document.getElementById("newCustRoute").value;
-const sendTransact = document.getElementById("transactionRoute").value;
+//const sendTransact = document.getElementById("transactionRoute").value;
 const getTroopEmail = document.getElementById("troopEmailRoute").value;
-const nextDelivery = document.getElementById("getNextDeliveryRoute").value;
+const getNextDelivery = document.getElementById("getNextDeliveryRoute").value;
 const getAvailCookies = document.getElementById("getAvailCookiesRoute").value;
 
 class CustomerMainComponent extends React.Component {
@@ -22,13 +22,13 @@ class CustomerMainComponent extends React.Component {
   }
 
   render(){
-    if(this.state.loggedIn){
+    if(!this.state.loggedIn){
       console.log(this.state.page);
       switch(this.state.page) {
-        case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(HomeComponent));
-        case "Order": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(OrderComponent));
-        case "Cart": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(CartComponent));
-        case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange}), ce(ContactComponent));
+        case "H": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(HomeComponent));
+        case "Order": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(OrderComponent));
+        case "Cart": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(CartComponent));
+        case "Contact": return ce('div', null, ce(HeaderComponent, {changePage: this.handlePageChange, doLogout: () => this.setState({loggedIn: false})}), ce(ContactComponent));
         case _: return ce('p',null,'FAIL');
       }
     } else {
@@ -59,7 +59,7 @@ class HeaderComponent extends React.Component {
           ce('button', {onClick: e => this.handleChange(e,"Order")}, 'Place Order'),
           ce('button', {onClick: e => this.handleChange(e,"Cart")}, 'Cart'),
           ce('button', {onClick: e => this.handleChange(e,"Contact")}, 'Contact Us'),
-          ce('button', {onClick: e => this.logout(e)}, 'Logout')
+          ce('button', {onClick: e => this.props.doLogout()}, 'Logout')
         )
     );
   }
@@ -162,12 +162,16 @@ class ContactComponent extends React.Component {
       'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),
       ce('br'),'Email:',ce('input',{type: "text", id: "email", value: this.state.email, onChange: e => this.typingHandler(e)}),
       ce('br'),'Comments:',ce('input',{type: "text", id: "message", value: this.state.message, onChange: e => this.typingHandler(e)}),
-      ce('br'), ce('button', null, 'Send')
+      ce('br'), ce('button', {onClick: e => this.contact(e)}, 'Send')
     );
   }
 
   typingHandler(e) {
     this.setState({[e.target['id']]: e.target.value});
+  }
+
+  contact(e) {
+    this.setState({name: "", email: "", message: ""});
   }
 }
 
@@ -215,7 +219,7 @@ class OrderComponent extends React.Component {
     super(props);
     this.state = {
       search: "",
-      cookies: "",
+      cookies: [],
       quantity: 0
     };
   }
@@ -227,19 +231,12 @@ class OrderComponent extends React.Component {
   render(){
     return ce('div', null,
       'Search for cookies: ', ce('input',{type: "text", value: this.state.search, onChange: e => this.typingHandler(e)}),
-      ce('button',{onClick: e => this.search(e)},'Search')
+      ce('button',{onClick: e => this.search(e)},'Search'),
       //Show cookies??? Image, name, descrip, price, avail
       //quantity input, add to cart button
       ce('div', {id: "avail_cookies"},
         ce('ul', null,
-          this.state.cookies.map((cookie_details,index) => {
-            ce('li', {key: index},
-              ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null),
-              ce('p', null, cookie_details.split(',')[0])),
-              ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),
-              ce('button',{onClick: e => this.cartUpdate(e)},'Add to Cart')
-            )
-          })
+          this.state.cookies.map((cookie_details,index) => ce('li', {key: index}, ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200},null), ce('p', null, cookie_details.split(',')[0]),ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),ce('button',{onClick: e => this.cartUpdate(e)},'Add to Cart')))
         )
       )
     );
@@ -312,7 +309,7 @@ class CartComponent extends React.Component {
 
   sendTransaction() {
     //how best to send??
-    const address = [this.state.street, this.state.city, this.state.state, this.state.zip, this.state.apt_no];
+    /*const address = [this.state.street, this.state.city, this.state.state, this.state.zip, this.state.apt_no];
 
     fetch(sendTransact, {
         method: 'POST',
@@ -324,7 +321,7 @@ class CartComponent extends React.Component {
       } else {
         this.setState({orderStatus: "Order failed. Please try again."});
       }
-    });
+    });*/
   }
 
   //Transaction(customer: String, seller: Int, deliveryMethod: String, deliveryInstructions: String, address: Address, date_ordered: Date)
