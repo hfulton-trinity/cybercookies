@@ -11,6 +11,10 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
   type Quantity = Int
   type Price = Double
 
+  def newCookieNoTroop(c: SharedMessages.Cookie): Unit = {
+    db.run(Cookie += CookieRow(-1, c.name, c.description, c.img_index))
+  }
+
   def newTroop(t: SharedMessages.Troop): Future[Int] = {
     val addyTroopRow =
       db.run(
@@ -182,5 +186,23 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
       )
       
     allTroops.map{seq => println(seq); seq.map(cR => SharedMessages.Cookie(cR.name, cR.description, cR.imageindex))}
+  }
+
+  def getCookieId(n: String): Future[Int] = {
+    val cID = db.run(
+      (for{ 
+        c <- Cookie if c.name === n
+      } yield {
+        c.id
+      }).result
+    )
+
+    cID.map{ seq =>
+      if(seq.nonEmpty) {
+        seq.head
+      } else {
+        -1
+      }
+    }
   }
 }
