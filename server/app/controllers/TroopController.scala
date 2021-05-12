@@ -44,6 +44,7 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
        implicit val stockDataReads = Json.reads[SharedMessages.Stock]
       implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
       implicit val troopDataReads2=Json.reads[SharedMessages.TroopData] 
+      implicit val allorderswrites=Json.writes[(SharedMessages.Cookie,Int,Double)]
 
 
   // implicit val messageReads=Json.reads[MessageOut]
@@ -71,10 +72,10 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
     withJsonBody[UserData] { ud =>
       model.logIn(ud.username.toInt,ud.password).map { ouserId =>
         ouserId match {
-          case true => //todo fix
+          case userid => //todo fix
             Ok(Json.toJson(true))
              .withSession("username" -> ud.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-          case false =>
+          case 0 =>
             Ok(Json.toJson(false))
         }
       }
@@ -82,29 +83,35 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
   }
 
 
-def createTroop = Action { implicit request =>
+def createTroop = Action.async { implicit request =>
   //val some:Option[Int]=Some(15)
   //val x=some.getOrElse(15)
     withJsonBody[TroopData] { ud => 
       model.newTroop(Troop(ud.username.toInt, Address(ud.address(0), ud.address(1), ud.address(2), "USA", ud.address(3).toInt, Some(15)), ud.password, new Date(2021, 5, 25), ud.email)).map {ouserId =>// returns a Boolean
         ouserId match {
-          case true => 
+          case userid => 
             Ok(Json.toJson(true))
              .withSession("username" -> ud.username.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-          case false =>
+          case 0 =>
             Ok(Json.toJson(false))
         }
     }
 }}
- def addcookies=TODO
   def allOrders= TODO
 
 
   def outStock= TODO
 
-  def allStock = TODO
+  def allStock = Action.async{implicit request=>
+    withSessionUsername{username=>
+    model.getAvailableCookies(username.toInt).map(out=>Ok(Json.toJson(out)))}
+  }
 
-  def totalSales= TODO
+  def totalSales= Action.async{ implicit request=>
+    UModel.totalSold.map(sales=>Ok(Json.toJson(sales)))
+
+
+  }
 
   def addStock= TODO
 }
