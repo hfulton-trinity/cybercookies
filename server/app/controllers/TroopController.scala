@@ -21,6 +21,7 @@ import shared.SharedMessages.Troop
 import java.sql.Date
 import shared.SharedMessages.Address
 import shared.SharedMessages.TroopData
+import shared.SharedMessages.Stock
 
 
 @Singleton
@@ -71,12 +72,11 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
   def validate = Action.async { implicit request =>
     withJsonBody[UserData] { ud =>
       model.logIn(ud.username.toInt,ud.password).map { ouserId =>
-        ouserId match {
-          case userid => //todo fix
-            Ok(Json.toJson(true))
-             .withSession("username" -> ud.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-          case 0 =>
-            Ok(Json.toJson(false))
+        if( ouserId>0){
+          Ok(Json.toJson(true))
+              .withSession("username" -> ud.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+        }else{
+          Ok(Json.toJson(false))
         }
       }
     }
@@ -84,36 +84,44 @@ class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigP
 
 
 def createTroop = Action.async { implicit request =>
-  //val some:Option[Int]=Some(15)
-  //val x=some.getOrElse(15)
     withJsonBody[TroopData] { ud => 
       model.newTroop(Troop(ud.username.toInt, Address(ud.address(0), ud.address(1), ud.address(2), "USA", ud.address(3).toInt, Some(15)), ud.password, new Date(2021, 5, 25), ud.email)).map {ouserId =>// returns a Boolean
-        ouserId match {
-          case userid => 
-            Ok(Json.toJson(true))
-             .withSession("username" -> ud.username.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
-          case 0 =>
-            Ok(Json.toJson(false))
+        if(ouserId>0){
+          Ok(Json.toJson(true))
+              .withSession("username" -> ud.username.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+        }else{
+          Ok(Json.toJson(false))
         }
     }
 }}
-  def allOrders= TODO
+  def allOrders= Action.async{implicit request=>//all of a troop's orders
+    withSessionUsername{ud=>
+      UModel.getOrders(ud.toInt).map(out=>Ok(Json.toJson(out)))
+    }
+  }
 
 
-  def outStock= TODO
+  def outStock= Action.async{implicit request=>// out of stock cookies
+    model.outOfStock.map(out=>Ok(Json.toJson(out)))}
 
-  def allStock = Action.async{implicit request=>
+  def allStock = Action.async{implicit request=>//the total stock of the troop
     withSessionUsername{username=>
     model.getAvailableCookies(username.toInt).map(out=>Ok(Json.toJson(out)))}
   }
 
-  def totalSales= Action.async{ implicit request=>
+  def totalSales= Action.async{ implicit request=>//all sales
     UModel.totalSold.map(sales=>Ok(Json.toJson(sales)))
 
 
   }
 
-  def addStock= TODO
+  def addStock= Action.async{ implicit request=>
+    withSessionUserid{id=>
+      withJsonBody[Stock]{ud=>
+        model.addCookies(id,ud.cookie,ud.num).map(count=>Ok(Json.toJson(count>0)))
+      }
+    }
+  }
 }
 
 

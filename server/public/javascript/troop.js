@@ -164,9 +164,13 @@ class LoginTroopComponent extends React.Component {
     const email=this.state.email;
     fetch(addTroop, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken},
+        headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken,'Accept':'application/json'},
         body: JSON.stringify({"n": n, "address": address , "password": password, "next_restock": next_restock, "email": email })
-    }).then(res => res.json()).then(data => {
+    }).then(res =>{
+      console.log(res);
+     // console.log(res.json())
+     console.log(res.json());}).then(data => {
+       console.log(data);
       if(data) {
         this.props.doLogin();
       } else {
@@ -261,9 +265,9 @@ class StockComponent extends React.Component {
         ce('ul',null,this.state.Stock.map((stock,index)=>ce('li',{key:index},stock)))),
       ce('h2',null,'Enter Inventory'),
       ce('div',{id:'Enter_Inventory'},
-          ce('input',{type:'text',id:"new_cookie",value:this.state.new_cookie,onChange: e=>this.typingHandler(e)}),
+          ce('input',{type:'number',id:"new_cookie",value:this.state.new_cookie,onChange: e=>this.typingHandler(e)}),
           ce('br'),
-          ce('input',{type:'text',id:"new_amount",value:this.state.new_amount,onChange: e=>this.typingHandler(e)}),
+          ce('input',{type:'number',id:"new_amount",value:this.state.new_amount,onChange: e=>this.typingHandler(e)}),
           ce('br'),
           ce('button',{onClick:e=>this.SendStock(e)},'Update Stock'))
     );
@@ -277,7 +281,7 @@ class StockComponent extends React.Component {
     fetch(addStock, { 
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Csrf-Token': csrfToken },
-      body: JSON.stringify({username,password,cost:"0.0"})
+      body: JSON.stringify({cookie:this.state.new_cookie,amount:this.state.new_amount})
     }).then(res => res.json()).then(data => {
       if(data) {
         this.loadTasks();
