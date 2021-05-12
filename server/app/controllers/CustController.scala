@@ -3,8 +3,8 @@ package controllers
 import javax.inject._
 import play.api.mvc._
 import play.api.i18n._
-import models.UserModel
-import models.TroopModel
+import models.DatabaseUser
+import models.DatabaseTroop
 import models._
 import play.api.libs.json._
 import shared.SharedMessages
@@ -14,11 +14,18 @@ import models.Tables._
 import java.sql.Date
 import java.util.Calendar
 
-@Singleton
-class CustController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+import play.api.db.slick.DatabaseConfigProvider
+import scala.concurrent.ExecutionContext
+import play.api.db.slick.HasDatabaseConfigProvider
+import slick.jdbc.JdbcProfile
+import slick.jdbc.PostgresProfile.api._
 
-  private val model = UserModel()
-  private val troop_model = TroopModel()
+@Singleton
+class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, cc: ControllerComponents) (implicit ec: ExecutionContext) 
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
+
+  private val model = new DatabaseUser(db)
+  private val troop_model = new DatabaseTroop(db)
   private val date: Calendar = Calendar.getInstance()
 
   def load = Action{ implicit request =>

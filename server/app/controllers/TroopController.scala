@@ -25,15 +25,12 @@ import shared.SharedMessages.TroopData
 
 @Singleton
 class TroopController @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
+  private val model= new DatabaseTroop(db)  
+  private val UModel= new DatabaseUser(db)
 
-
-
-
-private val model= new DatabaseTroop(db)  
-private val UModel= new DatabaseUser(db)
-    def load=Action{implicit request=>
-        Ok(views.html.troop())
-      }
+  def load=Action{implicit request=>
+    Ok(views.html.troop())
+  }
     
   implicit val userDataReads = Json.reads[UserData]
     implicit val addressDataReads = Json.reads[SharedMessages.Address]
@@ -46,14 +43,14 @@ private val UModel= new DatabaseUser(db)
       implicit val transactionDataWrites = Json.writes[SharedMessages.Transaction]
        implicit val stockDataReads = Json.reads[SharedMessages.Stock]
       implicit val stockDataWrites = Json.writes[SharedMessages.Stock]
-      implicit val troopDataReads2=Json.reads[SharedMessages.TroopData]
+      implicit val troopDataReads2=Json.reads[SharedMessages.TroopData] 
 
 
   // implicit val messageReads=Json.reads[MessageOut]
 // implicit val messageWrites=Json.writes[MessageData]
 // implicit val taskItemWrites = Json.writes[TaskItem]
 
-    def withJsonBody[A](f: A => Future[Result])(implicit request: Request[AnyContent], reads: Reads[A]): Future[Result] = {
+  def withJsonBody[A](f: A => Future[Result])(implicit request: Request[AnyContent], reads: Reads[A]): Future[Result] = {
     request.body.asJson.map { body =>
       Json.fromJson[A](body) match {
         case JsSuccess(a, path) => f(a)
@@ -62,18 +59,19 @@ private val UModel= new DatabaseUser(db)
     }.getOrElse(Future.successful(Redirect(routes.TroopController.load())))
   }
 
-     def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+  def withSessionUsername(f: String => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     request.session.get("username").map(f).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
-      def withSessionUserid(f: Int => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+
+  def withSessionUserid(f: Int => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     request.session.get("userid").map(userid => f(userid.toInt)).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
 
-def validate  = Action.async { implicit request =>
+  def validate = Action.async { implicit request =>
     withJsonBody[UserData] { ud =>
       model.logIn(ud.username.toInt,ud.password).map { ouserId =>
         ouserId match {
-          case true => 
+          case true => //todo fix
             Ok(Json.toJson(true))
              .withSession("username" -> ud.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
           case false =>
@@ -98,11 +96,11 @@ def createTroop = Action { implicit request =>
         }
     }
 }}
+ def addcookies=TODO
+  def allOrders= TODO
 
-def allOrders= TODO
 
-
-def outStock= TODO
+  def outStock= TODO
 
   def allStock = TODO
 
