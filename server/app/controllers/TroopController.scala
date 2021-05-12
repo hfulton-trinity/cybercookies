@@ -64,9 +64,40 @@ private val UModel= new DatabaseUser(db)
     request.session.get("userid").map(userid => f(userid.toInt)).getOrElse(Future.successful(Ok(Json.toJson(Seq.empty[String]))))
   }
 
-def validate = TODO
+  def validate = Action.async { implicit request =>
+    withJsonBody[UserData] { ud =>
+      model.getTroopInformation(ud.username.toInt,ud.password).map { ouserId =>
+        ouserId.n match {
+          case userid => // Not an actual check since it is not an option
+            Ok(Json.toJson(true))
+              .withSession("username" -> ud.username, "userid" -> userid.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse("")) //userid is a SharedMessages.Troop
+          case e =>
+            Ok(Json.toJson(false))
+        }
+      }
+    }
+  }
+
+
+/*
+def createTroop = Action { implicit request =>
+    withJsonBody[TroopData] { ud => 
+    model.newTroop(Troop(ud.username, Address(ud.address, ud.city, ud.state, ud.country, ud.zip, ud.apartment), ud.password, new Date(2021, 5, 25), ud.email)).map {ouserId =>// returns a Boolean
+        ouserId match {
+          case true => 
+            Ok(Json.toJson(true))
+             .withSession("username" -> ud.n.toString, "csrfToken" -> play.filters.csrf.CSRF.getToken.map(_.value).getOrElse(""))
+          case false =>
+            Ok(Json.toJson(false))
+        }
+    }
+}
+}
+*/
+
 
 def createTroop = TODO
+
 
 def allOrders= TODO
 

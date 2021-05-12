@@ -14,7 +14,7 @@ const csrfToken = document.getElementById("csrfToken").value;
 class TroopMainComponent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {page: "H", loggedIn: true};
+    this.state = {page: "H", loggedIn: false}; //remember to change back Aaron!!!
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
