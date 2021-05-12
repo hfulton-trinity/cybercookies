@@ -20,6 +20,11 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
     matches.map(uRow => SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.get))
   }
 
+  def validateUser(u: Username, p: Password): Future[Boolean] = {
+    val matches = db.run(Users.filter(userRow => userRow.username === u && userRow.password === p).result)
+    matches.map(uRow => uRow.nonEmpty)
+  }
+
   def getUserInfo(u: Username): Future[SharedMessages.User] = {
     val matches = db.run(Users.filter(userRow => userRow.username === u).result)
     matches.map(uRow => SharedMessages.User(uRow.head.username, uRow.head.password, uRow.head.email, uRow.head.fullName, uRow.head.troopToBuyFrom.get))

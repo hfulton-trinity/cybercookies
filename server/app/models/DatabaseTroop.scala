@@ -151,4 +151,18 @@ class DatabaseTroop(db: Database)(implicit ec: ExecutionContext) {
     val cookies = db.run(Cookie.map(cookieRow => cookieRow).result)
     cookies.map(cookieRow => cookieRow.map(cR => SharedMessages.Cookie(cR.name, cR.description, cR.imageindex)))
   }
+
+  def outOfStock: Future[Seq[SharedMessages.Cookie]] = {
+    val allTroops =
+      db.run(
+        (for {
+          troopCookie <- TroopCookies if troopCookie.quantity === 0
+          cookie <- Cookie if troopCookie.cookieId.get === cookie.id
+        } yield {
+          cookie
+        }).result
+      )
+      
+    allTroops.map(seq => seq.map(cR => SharedMessages.Cookie(cR.name, cR.description, cR.imageindex)))
+  }
 }
