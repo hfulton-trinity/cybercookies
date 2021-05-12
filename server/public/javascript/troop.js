@@ -249,7 +249,6 @@ class StockComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      //Stock:["TEST stock 1", "test stock 2"],
       Stock:[],
       new_cookie:"",
       new_amount:""
@@ -285,8 +284,8 @@ class StockComponent extends React.Component {
       body: JSON.stringify({cookie:this.state.new_cookie, amount:this.state.new_amount})
     }).then(res => res.json()).then(data => {
       if(data) {
-        //this.loadTasks();
-        this.setState({ errorMessage: "", newMessage: "", newUser:""});
+        this.loadStock
+        this.setState({new_cookie:"",new_amount:""});
       } else {
         this.setState({ errorMessage: "Failed to add." });
       }
