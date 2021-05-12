@@ -83,45 +83,50 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
       }
     }
   }
+def getTroopEmail=TODO
+def getNextDelivery=TODO
+def getEstimatedDelivery=TODO
+def getAvailCookies=TODO
+def sendTransaction=TODO
+def logout=TODO
+  // def getTroopEmail = Action.async { implicit request =>
+  //   withSessionUsername{ username =>
+  //     val user = model.getUserInfo(username)
+  //     val troop_email = troop_model.getTroopInformationNoPassword(user.troop_to_buy_from).email
+  //     Ok(Json.toJson(troop_email))
+  //   }
+  // }
 
-  def getTroopEmail = Action.async { implicit request =>
-    withSessionUsername{ username =>
-      val user = model.getUserInfo(username)
-      val troop_email = troop_model.getTroopInformationNoPassword(user.troop_to_buy_from).email
-      Ok(Json.toJson(troop_email))
-    }
-  }
+  // def getNextDelivery = Action.async { implicit request =>
+  //   withSessionUsername{ username =>
+  //     //val transact = model.myTransactions(username).sortBy(x => x.date_ordered).head
+  //     val deliv_date = new Date(transact.date_ordered.getTime() + 1210000000)
+  //     val dispTransact = "Troop: " + transact.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + transact.address
+  //     Ok(Json.toJson(dispTransact))
+  //   }
+  // }
 
-  def getNextDelivery = Action.async { implicit request =>
-    withSessionUsername{ username =>
-      val transact = model.myTransactions(username).sortBy(x => x.date_ordered).head
-      val deliv_date = new Date(transact.date_ordered.getTime() + 1210000000)
-      val dispTransact = "Troop: " + transact.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + transact.address
-      Ok(Json.toJson(dispTransact))
-    }
-  }
+  // def getEstimatedDelivery = Action.async { implicit request =>
+  //   Future.successful(Ok(Json.toJson(false)))//""+Calendar.get(Calendar.MONTH)+"/"+Calendar.get(Calendar.DAY_OF_MONTH)+"/"+Calendar.get(Calendar.YEAR)))
+  //   //+2wks??
 
-  def getEstimatedDelivery = Action.async { implicit request =>
-    Future.successful(Ok(Json.toJson(false)))//""+Calendar.get(Calendar.MONTH)+"/"+Calendar.get(Calendar.DAY_OF_MONTH)+"/"+Calendar.get(Calendar.YEAR)))
-    //+2wks??
+  //   //need estimated delivery date as string
+  // }
 
-    //need estimated delivery date as string
-  }
+  // def getAvailCookies = Action.async { implicit request =>
+  //   withSessionUsername{ username =>
+  //     //Ok(Json.toJson(troop_model.getAvailableCookies(model.getUserInfo(username).troop_to_buy_from).map {
+  //       //case (x,price,q) => ""+x.name+": "+x.description+" Price: "+ price+ " Quantity Available: "+q+","+x.img_index
+  //     //}))
+  //   }
+  // }
 
-  def getAvailCookies = Action.async { implicit request =>
-    withSessionUsername{ username =>
-      Ok(Json.toJson(troop_model.getAvailableCookies(model.getUserInfo(username).troop_to_buy_from).map {
-        case (x,price,q) => ""+x.name+": "+x.description+" Price: "+ price+ " Quantity Available: "+q+","+x.img_index
-      }))
-    }
-  }
+  // def sendTransaction = Action.async { implicit request =>
+  // //  Ok(Json.toJson(false)) //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
+  // }
 
-  def sendTransaction = Action.async { implicit request =>
-    Ok(Json.toJson(false)) //needs to add transaction to database, should receive address and list of strings with cookie name and amounts from js
-  }
-
-  def logout = Action.async { implicit request =>
-    Ok(Json.toJson(true)).withSession(request.session - "username")
-  }
+  // def logout = Action.async { implicit request =>
+  //   //Ok(Json.toJson(true)).withSession(request.session - "username")
+  // }
 
 }
