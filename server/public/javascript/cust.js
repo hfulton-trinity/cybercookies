@@ -92,14 +92,14 @@ class LoginCustComponent extends React.Component {
   }
 
   render(){
-    return ce('div', null, ce('form', {id: "cust_login"},
+    return ce('div', null, ce('div', {id: "cust_login"},
         ce('h2',null,'Login'),
         'Username:',ce('input',{type: "text", id: "username", value: this.state.username, onChange: e => this.typingHandler(e)}),
         ce('br'),'Password:',ce('input',{type: "text", id: "password", value: this.state.password, onChange: e => this.typingHandler(e)}),
         ce('br'), ce('button', {onClick: e => this.login(e)}, 'Login'),
         ce('span', {id: "login-message"}, this.state.loginErrorInfo),
         ce('br')
-      ), ce('form', {id: "create_customer"},
+      ), ce('div', {id: "create_customer"},
         ce('h2',null,'Create a Customer Account'),
         'Name:',ce('input',{type: "text", id: "name", value: this.state.name, onChange: e => this.typingHandler(e)}),
         ce('br'),'Username:',ce('input',{type: "text", id: "new_username", value: this.state.new_username, onChange: e => this.typingHandler(e)}),
@@ -212,7 +212,7 @@ class HomeComponent extends React.Component {
   }
 
   loadTroopEmail(){
-    fetch(getTroopEmail).then(res=>res.json()).then(email => this.setState({troop_email: "mailto: " +email}));
+    fetch(getTroopEmail).then(res=>res.json()).then(email => this.setState({troop_email: "mailto: " + email}));
   }
 
   loadNextDelivery(){
@@ -245,16 +245,7 @@ class OrderComponent extends React.Component {
       ce('div', {id: "avail_cookies"},
         ce('ul', null,
           this.state.cookies.map((cookie_details,index) => 
-            ce('li', {key: index}, 
-              ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200}, null),
-              ce('p', null, cookie_details.split(',')[0]),
-              ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),
-              ce('button',{id: cookie_details.split(',')[0], onClick: e => this.cartUpdate(e)},'Add to Cart')
-            )
-          )
-        )
-      )
-    );
+            ce('li', {key: index}, ce('img',{src: cookie_imgs[cookie_details.split(',')[1]], alt: "", width: 200}, null), ce('p', null, cookie_details.split(',')[0]), ce('input',{type: "number", id: "quantity", value: this.state.quantity, onChange: e => this.typingHandler(e)}),ce('button',{id: cookie_details.split(',')[0], onClick: e => this.cartUpdate(e)},'Add to Cart'))))));
   }
 
   loadAvailCookies(){
@@ -291,7 +282,7 @@ class CartComponent extends React.Component {
       crv: "",
       exp: "",
       orderStatus: "",
-      orders: [],
+      orders: [""],
       est_date: ""
     };
   }
@@ -321,7 +312,7 @@ class CartComponent extends React.Component {
         'Country: ', ce('input',{type: "text", value: this.state.country, onChange: e => this.typingHandler(e)}), ce('br'),
         'Zip Code: ', ce('input',{type: "number", value: this.state.zip, onChange: e => this.typingHandler(e)}), ce('br'),
         'Estimated Date of Delivery:', ce('br'),
-        ce('p',null,est_date), ce('br'),
+        ce('p',null,this.state.est_date), ce('br'),
         'Payment Info: (This is super duper secure so please use real card info)', ce('br'),
         'Card No.: ', ce('input',{type: "text", value: this.state.card_no, onChange: e => this.typingHandler(e)}),
         ce('br'),

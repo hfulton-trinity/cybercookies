@@ -65,6 +65,7 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
   }
 
   def myTransactions(u: Username): Future[Seq[SharedMessages.Transaction]] = {
+    println("mytrans")
     val myTrans = db.run(
       (for{
         user <- Users if user.username === u
@@ -75,10 +76,10 @@ class DatabaseUser(db: Database)(implicit ec: ExecutionContext) {
       }).result
     )
 
-    myTrans.map(_.map(tup => SharedMessages.Transaction(tup._1.customerId.getOrElse(-1), tup._1.sellerId.getOrElse(-1), tup._1.deliveryMethod, 
+    myTrans.map{seq => println(seq); seq.map(tup => SharedMessages.Transaction(tup._1.customerId.getOrElse(-1), tup._1.sellerId.getOrElse(-1), tup._1.deliveryMethod, 
       tup._1.deliveryInstructions.getOrElse(""), 
       SharedMessages.Address(tup._2.streetAddress, tup._2.city, tup._2.state, tup._2.country, tup._2.zip, tup._2.apartmentNumber), 
-      tup._1.dateOrdered)))
+      tup._1.dateOrdered))}
   }
 
   def getOrders(tn: Int): Future[Seq[SharedMessages.Transaction]] = {

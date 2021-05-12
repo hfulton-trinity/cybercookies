@@ -109,17 +109,16 @@ class CustController @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     withSessionUsername{ username =>
       val transactFut = model.myTransactions(username)
       val transaction = transactFut.map { t =>  
-        t.sortBy(x => x.date_ordered).head
-      }
-      val deliv_date = transaction.map { transact => 
-        new Date(transact.date_ordered.getTime() + 1210000000)
-      }
+        if(t.nonEmpty){
+          t.sortBy(x => x.date_ordered).head
+          val deliv_date = new Date(t.head.date_ordered.getTime() + 1210000000)
 
-      val dispTransact = transaction.flatMap { transact => deliv_date.map { deliv => 
-          "Troop: " + transact.seller + "   Expected Delivery Date: " + deliv + "    Address for delivery: " + transact.address
+          Ok(Json.toJson("Troop: " + t.head.seller + "   Expected Delivery Date: " + deliv_date + "    Address for delivery: " + t.head.address))
+        } else {
+          Ok(Json.toJson("No recent transactions!"))
         }
       }
-      dispTransact.map(dT => Ok(Json.toJson(dT)))
+      transaction
     }
   }
 

@@ -286,7 +286,7 @@ class StockComponent extends React.Component {
     }).then(res => res.json()).then(data => {
       if(data) {
         //this.loadTasks();
-        this.setState({ errorMessage: "", newMessage: "", newUser:""});
+        this.setState({ errorMessage: "", newMessage: "", newUser: ""});
       } else {
         this.setState({ errorMessage: "Failed to add." });
       }
