@@ -140,6 +140,7 @@ def createTroop = Action.async { implicit request =>
       }
     }
   }
+  def logout =TODO
 }
 
 
